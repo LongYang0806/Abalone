@@ -177,12 +177,14 @@ public class AbaloneLogicTest {
 		assertEquals(verifyMove.getLastMovePlayerId(), verifyMoveDone.getHackerPlayerId());
 	}
 	
-	private VerifyMove move(int lastMovePlayerId, Map<String, Object> lastState, 
-			List<Operation> lastMove){
-		return new VerifyMove(wId, playersInfo, emptyState, 
-				// do not need to check the result state, the server does that.
-				lastState, lastMove, lastMovePlayerId);
-	}
+	private VerifyMove move(
+      int lastMovePlayerId, Map<String, Object> lastState, List<Operation> lastMove) {
+    return new VerifyMove(playersInfo,
+        // in cheat we never need to check the resulting state (the server makes it, and the game
+        // doesn't have any hidden decisions such in Battleships)
+        emptyState,
+        lastState, lastMove, lastMovePlayerId, ImmutableMap.<Integer, Integer>of());
+  }
 	
 	private List<Operation> getInitialOperations() {
     return abaloneLogic.getInitialMove(wId, bId);
