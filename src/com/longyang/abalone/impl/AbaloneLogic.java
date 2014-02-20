@@ -9,6 +9,8 @@ import com.longyang.abalone.api.GameApi.VerifyMoveDone;
 
 public class AbaloneLogic {
 	
+	
+	
 	public VerifyMoveDone verify(VerifyMove verifyMove){
 		// TODO will be finished by HW2.
 		return new VerifyMoveDone();

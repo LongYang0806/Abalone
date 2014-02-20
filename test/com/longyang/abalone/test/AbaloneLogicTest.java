@@ -5,19 +5,26 @@ import static org.junit.Assert.assertEquals;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.longyang.abalone.api.GameApi.EndGame;
 import com.longyang.abalone.api.GameApi.Operation;
+import com.longyang.abalone.api.GameApi.Set;
+import com.longyang.abalone.api.GameApi.SetTurn;
 import com.longyang.abalone.api.GameApi.VerifyMove;
 import com.longyang.abalone.api.GameApi.VerifyMoveDone;
 import com.longyang.abalone.impl.AbaloneLogic;
 
-import com.longyang.abalone.api.GameApi.Set;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
-import org.junit.Test;
-
+/**
+ * Unit test class used to test Abalone Game.
+ * 
+ * @author Long Yang (ly603@nyu.edu)
+ *
+ */
 @RunWith(JUnit4.class)
 public class AbaloneLogicTest {
 	// Abalone logic object used for test.
@@ -27,8 +34,8 @@ public class AbaloneLogicTest {
 	private static final String TURN = "turn";
 	private static final String BOARD = "board";
 	private static final String JUMP = "jump";
-	private static final String WP = "WP";
-	private static final String BP = "BP";
+//	private static final String WP = "WP";
+//	private static final String BP = "BP";
 	private static final String W = "White Piece";
 	private static final String B = "Black Piece";
 	private static final String E = "Empty Square";
@@ -47,8 +54,8 @@ public class AbaloneLogicTest {
    * The entities used in Abalone game are as following (in both move and state, and fixed order):
    * TURN: WP/BP, 
    * BOARD: a list of list => stand for a 11 X 19 board
-   * MOVE: a list of list operation => (a, b, c, d, W/B) stands for piece jump 
-   * from (a, b) to (c, d) by W/B
+   * MOVE: a list of list operation => (a, b, c, d) stands for piece jump 
+   * from (a, b) to (c, d)
    */
   private final List<ImmutableList<String>> initialBoard = 
   		ImmutableList.<ImmutableList<String>>of(
@@ -95,44 +102,53 @@ public class AbaloneLogicTest {
   				ImmutableList.<String>of(I, I, I, I, S, I, S, I, S, I, S, I, S, I, S, I, I, I, I)
   		);
   
-  private final List<ImmutableList<String>> firstJumpByWP = 
-  		ImmutableList.<ImmutableList<String>>of(
-  				ImmutableList.<String>of("7", "11", "6", "10", W),
-  				ImmutableList.<String>of("8", "12", "7", "11", W),
-  				ImmutableList.<String>of("9", "13", "8", "12", W)
-  		);
+  private final List<ImmutableList<ImmutableList<Integer>>> firstJumpByWP = 
+			ImmutableList.<ImmutableList<ImmutableList<Integer>>>of(
+					// List for WP's pieces' moves
+					ImmutableList.<ImmutableList<Integer>>of(
+							ImmutableList.<Integer>of(7, 11, 6, 10),
+							ImmutableList.<Integer>of(8, 12, 7, 11),
+							ImmutableList.<Integer>of(9, 13, 8, 12)
+					),
+					// List for BP pieces' moves
+					ImmutableList.<ImmutableList<Integer>>of(
+					)
+			);
   
-  private final List<ImmutableList<String>> firstJumpByBP = 
-  		ImmutableList.<ImmutableList<String>>of(
-  				ImmutableList.<String>of("7", "5", "6", "6", B),
-  				ImmutableList.<String>of("8", "4", "7", "5", B)
-  		);
+  private final List<ImmutableList<ImmutableList<Integer>>> firstJumpByBP = 
+			ImmutableList.<ImmutableList<ImmutableList<Integer>>>of(
+					// List for WP's pieces' moves
+					ImmutableList.<ImmutableList<Integer>>of(
+					),
+					// List for BP pieces' moves
+					ImmutableList.<ImmutableList<Integer>>of(
+							ImmutableList.<Integer>of(7, 5, 6, 6),
+							ImmutableList.<Integer>of(8, 4, 7, 5)
+					)
+			);
   
   private final Map<String, Object> stateAfterInitialization = ImmutableMap.<String, Object>builder()
-  		.put(TURN, WP)
   		.put(BOARD, initialBoard)
   		.put(JUMP, getInitialOperations())
   		.build();
   
   private final Map<String, Object> stateAfterFirstWPMove = ImmutableMap.<String, Object>builder()
-  		.put(TURN, BP)
   		.put(BOARD, boardAfterFirstMoveByWP)
   		.put(JUMP, firstJumpByWP)
   		.build();
   
   private final Map<String, Object> stateAfterFirstBPMove = ImmutableMap.<String, Object>builder()
-  		.put(TURN, BP)
   		.put(BOARD, boardAfterFirstMoveByBP)
   		.put(JUMP, firstJumpByWP)
   		.build();
   
 	private final List<Operation> firstMoveByWP = ImmutableList.<Operation>of(
-			new Set(TURN, BP),
+			new SetTurn(bId),
 			new Set(BOARD, boardAfterFirstMoveByWP),
 			new Set(JUMP, firstJumpByWP));
 	
 	private final List<Operation> firstMoveByBP = ImmutableList.<Operation>of(
-			new Set(TURN, WP),
+			new SetTurn(wId),
 			new Set(BOARD, boardAfterFirstMoveByBP),
 			new Set(JUMP, firstJumpByBP));
 	
@@ -152,13 +168,11 @@ public class AbaloneLogicTest {
   		);
 	
 	private final Map<String, Object> commonPreviousStateBP = ImmutableMap.<String, Object>builder()
-  		.put(TURN, BP)
   		.put(BOARD, commonPreviousBoard)
   		.put(JUMP, firstJumpByWP)
   		.build();
 	
 	private final Map<String, Object> commonPreviousStateWP = ImmutableMap.<String, Object>builder()
-  		.put(TURN, WP)
   		.put(BOARD, commonPreviousBoard)
   		.put(JUMP, firstJumpByWP)
   		.build();
@@ -231,11 +245,17 @@ public class AbaloneLogicTest {
 	@Test
 	public void testRightDiagonalMoveByWP(){
 		// First, create jump
-		List<ImmutableList<String>> diagonalJump = 
-	  		ImmutableList.<ImmutableList<String>>of(
-	  				ImmutableList.<String>of("7", "13", "6", "14", W),
-	  				ImmutableList.<String>of("8", "12", "7", "13", W)
-	  		);
+		List<ImmutableList<ImmutableList<Integer>>> diagonalJump = 
+				ImmutableList.<ImmutableList<ImmutableList<Integer>>>of(
+						// List for WP's pieces' moves
+						ImmutableList.<ImmutableList<Integer>>of(
+								ImmutableList.<Integer>of(7, 13, 6, 14),
+			  				ImmutableList.<Integer>of(8, 12, 7, 13)
+						),
+						// List for BP pieces' moves
+						ImmutableList.<ImmutableList<Integer>>of(
+						)
+				);
 		
 		// Second, create the board after the move
 		List<ImmutableList<String>> boardAfterDiagonalMoveByWP = 
@@ -255,7 +275,7 @@ public class AbaloneLogicTest {
 		
 		// Third, create the move
 		List<Operation> diagonalMoveByWP = ImmutableList.<Operation>of(
-				new Set(TURN, BP),
+				new SetTurn(bId),
 				new Set(BOARD, boardAfterDiagonalMoveByWP),
 				new Set(JUMP, diagonalJump));
 		
@@ -282,19 +302,25 @@ public class AbaloneLogicTest {
 		
 		Map<String, Object> previousState = 
 				ImmutableMap.<String, Object>builder()
-	  			.put(TURN, BP)
 	  			.put(BOARD, previousBoard)
 	  			.put(JUMP, firstJumpByWP)
 	  			.build();
 		
 		// Afterward
-		List<ImmutableList<String>> currentJump = 
-	  		ImmutableList.<ImmutableList<String>>of(
-	  				ImmutableList.<String>of("6", "8", "5", "9", B),
-	  				ImmutableList.<String>of("7", "7", "6", "8", B),
-	  				ImmutableList.<String>of("8", "6", "7", "7", B),
-	  				ImmutableList.<String>of("9", "5", "8", "6", B)
-	  		);
+		List<ImmutableList<ImmutableList<Integer>>> currentJump = 
+				ImmutableList.<ImmutableList<ImmutableList<Integer>>>of(
+						// List for WP's pieces' moves
+						ImmutableList.<ImmutableList<Integer>>of(
+						),
+						// List for BP pieces' moves
+						ImmutableList.<ImmutableList<Integer>>of(
+								ImmutableList.<Integer>of(6, 8, 5, 9),
+			  				ImmutableList.<Integer>of(7, 7, 6, 8),
+			  				ImmutableList.<Integer>of(8, 6, 7, 7),
+			  				ImmutableList.<Integer>of(9, 5, 8, 6)
+						)
+				);
+
 		List<ImmutableList<String>> afterwardBoard = 
 	  		ImmutableList.<ImmutableList<String>>of(
 	  				ImmutableList.<String>of(I, I, I, I, S, I, S, I, S, I, S, I, S, I, S, I, I, I, I),
@@ -310,7 +336,7 @@ public class AbaloneLogicTest {
 	  				ImmutableList.<String>of(I, I, I, I, S, I, S, I, S, I, S, I, S, I, S, I, I, I, I)
 	  		);
 		List<Operation> currentMove = ImmutableList.<Operation>of(
-				new Set(TURN, WP),
+				new SetTurn(wId),
 				new Set(BOARD, afterwardBoard),
 				new Set(JUMP, currentJump));
 		
@@ -320,11 +346,18 @@ public class AbaloneLogicTest {
 	@Test
 	public void testRightHorizontalMove(){
 		//Use initialState as previous, create Afterward
-		List<ImmutableList<String>> currentJump = 
-	  		ImmutableList.<ImmutableList<String>>of(
-	  				ImmutableList.<String>of("9", "11", "9", "9", W),
-	  				ImmutableList.<String>of("9", "13", "9", "11", W)
-	  		);
+		List<ImmutableList<ImmutableList<Integer>>> currentJump = 
+				ImmutableList.<ImmutableList<ImmutableList<Integer>>>of(
+						// List for WP's pieces' moves
+						ImmutableList.<ImmutableList<Integer>>of(
+								ImmutableList.<Integer>of(9, 11, 9, 9),
+			  				ImmutableList.<Integer>of(9, 13, 9, 11)
+						),
+						// List for BP pieces' moves
+						ImmutableList.<ImmutableList<Integer>>of(
+						)
+				);
+		
 		List<ImmutableList<String>> afterwardBoard = 
 	  		ImmutableList.<ImmutableList<String>>of(
 	  				ImmutableList.<String>of(I, I, I, I, S, I, S, I, S, I, S, I, S, I, S, I, I, I, I),
@@ -340,7 +373,7 @@ public class AbaloneLogicTest {
 	  				ImmutableList.<String>of(I, I, I, I, S, I, S, I, S, I, S, I, S, I, S, I, I, I, I)
 	  		);
 		List<Operation> currentMove = ImmutableList.<Operation>of(
-				new Set(TURN, BP),
+				new SetTurn(bId),
 				new Set(BOARD, afterwardBoard),
 				new Set(JUMP, currentJump));
 		
@@ -349,11 +382,18 @@ public class AbaloneLogicTest {
 	
 	@Test
 	public void testWrongHorizontalMoveOnEmptySqure(){
-		List<ImmutableList<String>> currentJump = 
-	  		ImmutableList.<ImmutableList<String>>of(
-	  				ImmutableList.<String>of("9", "11", "9", "10", W),
-	  				ImmutableList.<String>of("9", "13", "9", "11", W)
-	  		);
+		List<ImmutableList<ImmutableList<Integer>>> currentJump = 
+				ImmutableList.<ImmutableList<ImmutableList<Integer>>>of(
+						// List for WP's pieces' moves
+						ImmutableList.<ImmutableList<Integer>>of(
+								ImmutableList.<Integer>of(9, 11, 9, 10),
+			  				ImmutableList.<Integer>of(9, 13, 9, 11)
+						),
+						// List for BP pieces' moves
+						ImmutableList.<ImmutableList<Integer>>of(
+						)
+				);
+
 		List<ImmutableList<String>> afterwardBoard = 
 	  		ImmutableList.<ImmutableList<String>>of(
 	  				ImmutableList.<String>of(I, I, I, I, S, I, S, I, S, I, S, I, S, I, S, I, I, I, I),
@@ -369,7 +409,7 @@ public class AbaloneLogicTest {
 	  				ImmutableList.<String>of(I, I, I, I, S, I, S, I, S, I, S, I, S, I, S, I, I, I, I)
 	  		);
 		List<Operation> currentMove = ImmutableList.<Operation>of(
-				new Set(TURN, BP),
+				new SetTurn(bId),
 				new Set(BOARD, afterwardBoard),
 				new Set(JUMP, currentJump));
 		
@@ -378,13 +418,20 @@ public class AbaloneLogicTest {
 	
 	@Test
 	public void testWrongHorizontalMoveWith4Pieces(){
-		List<ImmutableList<String>> currentJump = 
-	  		ImmutableList.<ImmutableList<String>>of(
-	  				ImmutableList.<String>of("2", "6", "2", "4", W),
-	  				ImmutableList.<String>of("2", "8", "2", "6", W),
-	  				ImmutableList.<String>of("2", "10", "2", "8", W),
-	  				ImmutableList.<String>of("2", "12", "2", "10", W)
-	  		);
+		List<ImmutableList<ImmutableList<Integer>>> currentJump = 
+				ImmutableList.<ImmutableList<ImmutableList<Integer>>>of(
+						// List for WP's pieces' moves
+						ImmutableList.<ImmutableList<Integer>>of(
+								ImmutableList.<Integer>of(2, 6, 2, 4),
+			  				ImmutableList.<Integer>of(2, 8, 2, 6),
+			  				ImmutableList.<Integer>of(2, 10, 2, 8),
+			  				ImmutableList.<Integer>of(2, 12, 2, 10)
+						),
+						// List for BP pieces' moves
+						ImmutableList.<ImmutableList<Integer>>of(
+						)
+				);
+
 		List<ImmutableList<String>> afterwardBoard = 
 	  		ImmutableList.<ImmutableList<String>>of(
 	  				ImmutableList.<String>of(I, I, I, I, S, I, S, I, S, I, S, I, S, I, S, I, I, I, I),
@@ -400,7 +447,7 @@ public class AbaloneLogicTest {
 	  				ImmutableList.<String>of(I, I, I, I, S, I, S, I, S, I, S, I, S, I, S, I, I, I, I)
 	  		);
 		List<Operation> currentMove = ImmutableList.<Operation>of(
-				new Set(TURN, WP),
+				new SetTurn(wId),
 				new Set(BOARD, afterwardBoard),
 				new Set(JUMP, currentJump));
 		
@@ -409,12 +456,19 @@ public class AbaloneLogicTest {
 	
 	@Test
 	public void testRightPush2on1(){
-		List<ImmutableList<String>> currentJump = 
-	  		ImmutableList.<ImmutableList<String>>of(
-	  				ImmutableList.<String>of("5", "13", "4", "14", B),
-	  				ImmutableList.<String>of("6", "12", "5", "13", B),
-	  				ImmutableList.<String>of("4", "14", "3", "15", W)
-	  		);
+		List<ImmutableList<ImmutableList<Integer>>> currentJump = 
+				ImmutableList.<ImmutableList<ImmutableList<Integer>>>of(
+						// List for WP's pieces' moves
+						ImmutableList.<ImmutableList<Integer>>of(
+								ImmutableList.<Integer>of(4, 14, 3, 15)
+						),
+						// List for BP pieces' moves
+						ImmutableList.<ImmutableList<Integer>>of(
+								ImmutableList.<Integer>of(5, 13, 4, 14),
+			  				ImmutableList.<Integer>of(6, 12, 5, 13)
+						)
+				);
+		
 		List<ImmutableList<String>> afterwardBoard = 
 	  		ImmutableList.<ImmutableList<String>>of(
 	  				ImmutableList.<String>of(I, I, I, I, S, I, S, I, S, I, S, I, S, I, S, I, I, I, I),
@@ -430,7 +484,7 @@ public class AbaloneLogicTest {
 	  				ImmutableList.<String>of(I, I, I, I, S, I, S, I, S, I, S, I, S, I, S, I, I, I, I)
 	  		);
 		List<Operation> currentMove = ImmutableList.<Operation>of(
-				new Set(TURN, WP),
+				new SetTurn(wId),
 				new Set(BOARD, afterwardBoard),
 				new Set(JUMP, currentJump));
 		
@@ -439,11 +493,18 @@ public class AbaloneLogicTest {
 	
 	@Test
 	public void testWrongPush1on1(){
-		List<ImmutableList<String>> currentJump = 
-	  		ImmutableList.<ImmutableList<String>>of(
-	  				ImmutableList.<String>of("7", "5", "6", "6", B),
-	  				ImmutableList.<String>of("6", "6", "5", "7", W)
-	  		);
+		List<ImmutableList<ImmutableList<Integer>>> currentJump = 
+				ImmutableList.<ImmutableList<ImmutableList<Integer>>>of(
+						// List for WP's pieces' moves
+						ImmutableList.<ImmutableList<Integer>>of(
+								ImmutableList.<Integer>of(6, 6, 5, 7)
+						),
+						// List for BP pieces' moves
+						ImmutableList.<ImmutableList<Integer>>of(
+								ImmutableList.<Integer>of(7, 5, 6, 6)
+						)
+				);
+		
 		List<ImmutableList<String>> afterwardBoard = 
 	  		ImmutableList.<ImmutableList<String>>of(
 	  				ImmutableList.<String>of(I, I, I, I, S, I, S, I, S, I, S, I, S, I, S, I, I, I, I),
@@ -459,7 +520,7 @@ public class AbaloneLogicTest {
 	  				ImmutableList.<String>of(I, I, I, I, S, I, S, I, S, I, S, I, S, I, S, I, I, I, I)
 	  		);
 		List<Operation> currentMove = ImmutableList.<Operation>of(
-				new Set(TURN, WP),
+				new SetTurn(wId),
 				new Set(BOARD, afterwardBoard),
 				new Set(JUMP, currentJump));
 		
@@ -468,12 +529,19 @@ public class AbaloneLogicTest {
 	
 	@Test
 	public void testWrongPush1on2(){
-		List<ImmutableList<String>> currentJump = 
-	  		ImmutableList.<ImmutableList<String>>of(
-	  				ImmutableList.<String>of("4", "14", "5", "13", W),
-	  				ImmutableList.<String>of("5", "13", "6", "12", B),
-	  				ImmutableList.<String>of("6", "12", "7", "11", B)
-	  		);
+		List<ImmutableList<ImmutableList<Integer>>> currentJump = 
+				ImmutableList.<ImmutableList<ImmutableList<Integer>>>of(
+						// List for WP's pieces' moves
+						ImmutableList.<ImmutableList<Integer>>of(
+								ImmutableList.<Integer>of(4, 14, 5, 13)
+						),
+						// List for BP pieces' moves
+						ImmutableList.<ImmutableList<Integer>>of(
+								ImmutableList.<Integer>of(5, 13, 6, 12),
+								ImmutableList.<Integer>of(6, 12, 7, 11)
+						)
+				);
+		
 		List<ImmutableList<String>> afterwardBoard = 
 	  		ImmutableList.<ImmutableList<String>>of(
 	  				ImmutableList.<String>of(I, I, I, I, S, I, S, I, S, I, S, I, S, I, S, I, I, I, I),
@@ -489,7 +557,7 @@ public class AbaloneLogicTest {
 	  				ImmutableList.<String>of(I, I, I, I, S, I, S, I, S, I, S, I, S, I, S, I, I, I, I)
 	  		);
 		List<Operation> currentMove = ImmutableList.<Operation>of(
-				new Set(TURN, BP),
+				new SetTurn(bId),
 				new Set(BOARD, afterwardBoard),
 				new Set(JUMP, currentJump));
 		
@@ -498,14 +566,21 @@ public class AbaloneLogicTest {
 	
 	@Test
 	public void testWrongPush2on3(){
-		List<ImmutableList<String>> currentJump = 
-	  		ImmutableList.<ImmutableList<String>>of(
-	  				ImmutableList.<String>of("4", "16", "4", "14", W),
-	  				ImmutableList.<String>of("4", "14", "4", "12", W),
-	  				ImmutableList.<String>of("4", "12", "4", "10", B),
-	  				ImmutableList.<String>of("4", "10", "4", "8", B),
-	  				ImmutableList.<String>of("4", "8", "4", "6", B)
-	  		);
+		List<ImmutableList<ImmutableList<Integer>>> currentJump = 
+				ImmutableList.<ImmutableList<ImmutableList<Integer>>>of(
+						// List for WP's pieces' moves
+						ImmutableList.<ImmutableList<Integer>>of(
+								ImmutableList.<Integer>of(4, 16, 4, 14),
+								ImmutableList.<Integer>of(4, 14, 4, 12)
+						),
+						// List for BP pieces' moves
+						ImmutableList.<ImmutableList<Integer>>of(
+								ImmutableList.<Integer>of(4, 12, 4, 10),
+								ImmutableList.<Integer>of(4, 10, 4, 8),
+								ImmutableList.<Integer>of(4, 8, 4, 6)
+						)
+				);
+		
 		List<ImmutableList<String>> afterwardBoard = 
 	  		ImmutableList.<ImmutableList<String>>of(
 	  				ImmutableList.<String>of(I, I, I, I, S, I, S, I, S, I, S, I, S, I, S, I, I, I, I),
@@ -521,7 +596,7 @@ public class AbaloneLogicTest {
 	  				ImmutableList.<String>of(I, I, I, I, S, I, S, I, S, I, S, I, S, I, S, I, I, I, I)
 	  		);
 		List<Operation> currentMove = ImmutableList.<Operation>of(
-				new Set(TURN, BP),
+				new SetTurn(bId),
 				new Set(BOARD, afterwardBoard),
 				new Set(JUMP, currentJump));
 		
@@ -530,12 +605,19 @@ public class AbaloneLogicTest {
 	
 	@Test
 	public void testCannotPush(){
-		List<ImmutableList<String>> currentJump = 
-	  		ImmutableList.<ImmutableList<String>>of(
-	  				ImmutableList.<String>of("1", "11", "1", "9", B),
-	  				ImmutableList.<String>of("1", "9", "1", "7", W),
-	  				ImmutableList.<String>of("1", "7", "1", "5", B)
-	  		);
+		List<ImmutableList<ImmutableList<Integer>>> currentJump = 
+				ImmutableList.<ImmutableList<ImmutableList<Integer>>>of(
+						// List for WP's pieces' moves
+						ImmutableList.<ImmutableList<Integer>>of(
+								ImmutableList.<Integer>of(1, 9, 1, 7)
+						),
+						// List for BP pieces' moves
+						ImmutableList.<ImmutableList<Integer>>of(
+								ImmutableList.<Integer>of(1, 11, 1, 9),
+								ImmutableList.<Integer>of(1, 7, 1, 5)
+						)
+				);
+		
 		List<ImmutableList<String>> afterwardBoard = 
 	  		ImmutableList.<ImmutableList<String>>of(
 	  				ImmutableList.<String>of(I, I, I, I, S, I, S, I, S, I, S, I, S, I, S, I, I, I, I),
@@ -551,7 +633,7 @@ public class AbaloneLogicTest {
 	  				ImmutableList.<String>of(I, I, I, I, S, I, S, I, S, I, S, I, S, I, S, I, I, I, I)
 	  		);
 		List<Operation> currentMove = ImmutableList.<Operation>of(
-				new Set(TURN, WP),
+				new SetTurn(wId),
 				new Set(BOARD, afterwardBoard),
 				new Set(JUMP, currentJump));
 		
@@ -560,14 +642,21 @@ public class AbaloneLogicTest {
 	
 	@Test
 	public void testNormalEndGame(){
-		List<ImmutableList<String>> currentJump = 
-	  		ImmutableList.<ImmutableList<String>>of(
-	  				ImmutableList.<String>of("4", "8", "4", "10", B),
-	  				ImmutableList.<String>of("4", "10", "4", "12", B),
-	  				ImmutableList.<String>of("4", "12", "4", "14", B),
-	  				ImmutableList.<String>of("4", "14", "4", "16", W),
-	  				ImmutableList.<String>of("4", "16", "4", "17", W)
-	  		);
+		List<ImmutableList<ImmutableList<Integer>>> currentJump = 
+				ImmutableList.<ImmutableList<ImmutableList<Integer>>>of(
+						// List for WP's pieces' moves
+						ImmutableList.<ImmutableList<Integer>>of(
+								ImmutableList.<Integer>of(4, 16, 4, 17),
+								ImmutableList.<Integer>of(4, 14, 4, 16)
+						),
+						// List for BP pieces' moves
+						ImmutableList.<ImmutableList<Integer>>of(
+								ImmutableList.<Integer>of(4, 12, 4, 14),
+								ImmutableList.<Integer>of(4, 10, 4, 12),
+								ImmutableList.<Integer>of(4, 8, 4, 10)
+						)
+				);
+
 		List<ImmutableList<String>> afterwardBoard = 
 	  		ImmutableList.<ImmutableList<String>>of(
 	  				ImmutableList.<String>of(I, I, I, I, S, I, S, I, S, I, S, I, S, I, S, I, I, I, I),
@@ -583,7 +672,7 @@ public class AbaloneLogicTest {
 	  				ImmutableList.<String>of(I, I, I, I, S, I, S, I, S, I, S, I, S, I, S, I, I, I, I)
 	  		);
 		List<Operation> currentMove = ImmutableList.<Operation>of(
-				new Set(TURN, WP),
+				new SetTurn(wId),
 				new Set(BOARD, afterwardBoard),
 				new Set(JUMP, currentJump),
 				new EndGame(bId));
@@ -593,12 +682,19 @@ public class AbaloneLogicTest {
 	
 	@Test
 	public void testWrongEndGameClaimWithNoEnding(){
-		List<ImmutableList<String>> currentJump = 
-	  		ImmutableList.<ImmutableList<String>>of(
-	  				ImmutableList.<String>of("1", "11", "1", "9", B),
-	  				ImmutableList.<String>of("1", "9", "1", "7", W),
-	  				ImmutableList.<String>of("1", "7", "1", "5", B)
-	  		);
+		List<ImmutableList<ImmutableList<Integer>>> currentJump = 
+				ImmutableList.<ImmutableList<ImmutableList<Integer>>>of(
+						// List for WP's pieces' moves
+						ImmutableList.<ImmutableList<Integer>>of(
+								ImmutableList.<Integer>of(1, 9, 1, 7)
+						),
+						// List for BP pieces' moves
+						ImmutableList.<ImmutableList<Integer>>of(
+								ImmutableList.<Integer>of(1, 11, 1, 7),
+								ImmutableList.<Integer>of(1, 7, 1, 5)
+						)
+				);
+
 		List<ImmutableList<String>> afterwardBoard = 
 	  		ImmutableList.<ImmutableList<String>>of(
 	  				ImmutableList.<String>of(I, I, I, I, S, I, S, I, S, I, S, I, S, I, S, I, I, I, I),
@@ -614,7 +710,7 @@ public class AbaloneLogicTest {
 	  				ImmutableList.<String>of(I, I, I, I, S, I, S, I, S, I, S, I, S, I, S, I, I, I, I)
 	  		);
 		List<Operation> currentMove = ImmutableList.<Operation>of(
-				new Set(TURN, WP),
+				new SetTurn(wId),
 				new Set(BOARD, afterwardBoard),
 				new Set(JUMP, currentJump),
 				new EndGame(bId));
@@ -624,14 +720,21 @@ public class AbaloneLogicTest {
 	
 	@Test
 	public void testNoEndGameWhenGameIsEnd(){
-		List<ImmutableList<String>> currentJump = 
-	  		ImmutableList.<ImmutableList<String>>of(
-	  				ImmutableList.<String>of("4", "8", "4", "10", B),
-	  				ImmutableList.<String>of("4", "10", "4", "12", B),
-	  				ImmutableList.<String>of("4", "12", "4", "14", B),
-	  				ImmutableList.<String>of("4", "14", "4", "16", W),
-	  				ImmutableList.<String>of("4", "16", "4", "17", W)
-	  		);
+		List<ImmutableList<ImmutableList<Integer>>> currentJump = 
+				ImmutableList.<ImmutableList<ImmutableList<Integer>>>of(
+						// List for WP's pieces' moves
+						ImmutableList.<ImmutableList<Integer>>of(
+								ImmutableList.<Integer>of(4, 16, 4, 17),
+								ImmutableList.<Integer>of(4, 14, 4, 16)
+						),
+						// List for BP pieces' moves
+						ImmutableList.<ImmutableList<Integer>>of(
+								ImmutableList.<Integer>of(4, 12, 4, 14),
+								ImmutableList.<Integer>of(4, 10, 4, 12),
+								ImmutableList.<Integer>of(4, 8, 4, 10)
+						)
+				);
+		
 		List<ImmutableList<String>> afterwardBoard = 
 	  		ImmutableList.<ImmutableList<String>>of(
 	  				ImmutableList.<String>of(I, I, I, I, S, I, S, I, S, I, S, I, S, I, S, I, I, I, I),
@@ -647,7 +750,7 @@ public class AbaloneLogicTest {
 	  				ImmutableList.<String>of(I, I, I, I, S, I, S, I, S, I, S, I, S, I, S, I, I, I, I)
 	  		);
 		List<Operation> currentMove = ImmutableList.<Operation>of(
-				new Set(TURN, WP),
+				new SetTurn(wId),
 				new Set(BOARD, afterwardBoard),
 				new Set(JUMP, currentJump));
 		
