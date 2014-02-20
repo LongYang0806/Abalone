@@ -70,4 +70,16 @@ public class AbaloneUtilities {
 		}
 	}
 	
+	/**
+	 * Method used to check whether the given condition is true.
+	 * @param condition to be tested condition
+	 * @param message optional debug messages.
+	 * @throws RuntimeException if the give {@code condition} is false.
+	 */
+	public static void check(boolean condition, String... message){
+		if(!condition){
+			throw new RuntimeException("Hacker found: " + message);
+		}
+	}
+	
 }

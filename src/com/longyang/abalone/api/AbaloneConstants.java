@@ -1,5 +1,6 @@
 package com.longyang.abalone.api;
 
+import java.util.Comparator;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
@@ -92,4 +93,51 @@ public class AbaloneConstants {
 					ImmutableList.<Integer>of(10, 16), ImmutableList.<Integer>of(10, 17), 
 					ImmutableList.<Integer>of(10, 18)
 			);
+	
+	/*
+	 * Initial board for initial operations.
+	 */
+	public static final List<ImmutableList<String>> initialBoard = 
+  		ImmutableList.<ImmutableList<String>>of(
+  				ImmutableList.<String>of(I, I, I, I, S, I, S, I, S, I, S, I, S, I, S, I, I, I, I),
+  				ImmutableList.<String>of(I, I, I, S, S, W, I, W, I, E, I, B, I, B, S, S, I, I, I),
+  				ImmutableList.<String>of(I, I, S, S, W, I, W, I, W, I, B, I, B, I, B, S, S, I, I),
+  				ImmutableList.<String>of(I, S, S, E, I, W, I, W, I, E, I, B, I, B, E, I, S, S, I),
+  				ImmutableList.<String>of(S, S, E, I, E, I, E, I, E, I, E, I, E, I, E, I, E, S, S),
+  				ImmutableList.<String>of(S, E, I, E, I, E, I, E, I, E, I, E, I, E, I, E, I, E, S),
+  				ImmutableList.<String>of(S, S, E, I, E, I, E, I, E, I, E, I, E, I, E, I, E, S, S),
+  				ImmutableList.<String>of(I, S, S, E, I, B, I, B, I, E, I, W, I, W, E, I, S, S, I),
+  				ImmutableList.<String>of(I, I, S, S, B, I, B, I, B, I, W, I, W, I, W, S, S, I, I),
+  				ImmutableList.<String>of(I, I, I, S, S, B, I, B, I, E, I, W, I, W, S, S, I, I, I),
+  				ImmutableList.<String>of(I, I, I, I, S, I, S, I, S, I, S, I, S, I, S, I, I, I, I)
+  		);
+	
+	/*
+	 * comparator throws exception if two lists are equal.
+	 */
+	public static Comparator<List<Integer>> listComparator = new Comparator<List<Integer>>(){
+		@Override
+		public int compare(List<Integer> aList, List<Integer> bList){
+			if(aList == null || aList.isEmpty() || aList.size() != 4){
+				return -1;
+			}else if(bList == null || bList.isEmpty() || bList.size() != 4){
+				return 1;
+			}else{
+				if(aList.get(0) < bList.get(0)){
+					return -1;
+				}else if(aList.get(0) == bList.get(0)){
+					if(aList.get(1) > bList.get(1)){
+						return 1;
+					}else if(aList.get(1) == bList.get(1)){
+						throw new IllegalArgumentException("Hacker found: can not move the same piece twice");
+					}else{
+						return -1;
+					}
+				}else{
+					return 1;
+				}
+			}
+		}
+	};
+	
 }

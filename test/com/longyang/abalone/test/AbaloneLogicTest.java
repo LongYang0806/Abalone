@@ -2,6 +2,7 @@ package com.longyang.abalone.test;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -43,12 +44,12 @@ public class AbaloneLogicTest {
 	private static final String I = "Illegal Square";
 	private final int wId = 1;
 	private final int bId = 2;
-	private final Map<String, Object> wInfo = ImmutableMap.<String, Object>of(PLAYER_ID, wId);
-	private final Map<String, Object> bInfo = ImmutableMap.<String, Object>of(PLAYER_ID, bId);
-	private final List<Map<String, Object>> playersInfo = 
+	private final ImmutableMap<String, Object> wInfo = ImmutableMap.<String, Object>of(PLAYER_ID, wId);
+	private final ImmutableMap<String, Object> bInfo = ImmutableMap.<String, Object>of(PLAYER_ID, bId);
+	private final ImmutableList<Map<String, Object>> playersInfo = 
 			ImmutableList.<Map<String, Object>>of(wInfo, bInfo);
-	private final Map<String, Object> emptyState = ImmutableMap.<String, Object>of();
-  private final Map<String, Object> nonEmptyState = ImmutableMap.<String, Object>of("k", "v");
+	private final ImmutableMap<String, Object> emptyState = ImmutableMap.<String, Object>of();
+  private final ImmutableMap<String, Object> nonEmptyState = ImmutableMap.<String, Object>of("k", "v");
   
   /*
    * The entities used in Abalone game are as following (in both move and state, and fixed order):
@@ -129,7 +130,7 @@ public class AbaloneLogicTest {
   
   private final Map<String, Object> stateAfterInitialization = ImmutableMap.<String, Object>builder()
   		.put(BOARD, initialBoard)
-  		.put(JUMP, getInitialOperations())
+  		.put(JUMP, ImmutableList.<Integer>of())
   		.build();
   
   private final Map<String, Object> stateAfterFirstWPMove = ImmutableMap.<String, Object>builder()
@@ -182,7 +183,7 @@ public class AbaloneLogicTest {
 	 * link: https://github.com/yoav-zibin
 	 */
 	private void assertMoveOk(VerifyMove verifyMove){
-		VerifyMoveDone verifyMoveDone = new VerifyMoveDone();
+		VerifyMoveDone verifyMoveDone = abaloneLogic.verify(verifyMove);
 		assertEquals(0, verifyMoveDone.getHackerPlayerId());
 	}
 	
@@ -223,8 +224,9 @@ public class AbaloneLogicTest {
 	@Test
   public void testInitialMoveWithExtraOperation() {
     List<Operation> initialOperations = getInitialOperations();
-    initialOperations.add(new Set(BOARD, ImmutableList.of()));
-    assertHacker(move(wId, emptyState, initialOperations));
+    List<Operation> operations = new ArrayList<Operation>(initialOperations);
+    operations.add(new Set(BOARD, ImmutableList.of()));
+    assertHacker(move(wId, emptyState, ImmutableList.copyOf(operations)));
   }
 	
 	@Test
@@ -756,4 +758,5 @@ public class AbaloneLogicTest {
 		
 		assertHacker(move(bId, commonPreviousStateBP, currentMove));
 	}
+	
 }
