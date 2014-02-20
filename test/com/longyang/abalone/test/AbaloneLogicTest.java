@@ -31,8 +31,7 @@ public class AbaloneLogicTest {
 	// Abalone logic object used for test.
 	private AbaloneLogic abaloneLogic = new AbaloneLogic();
 	
-	private static final String PLAYER_ID = "player_id";
-	private static final String TURN = "turn";
+	private static final String PLAYER_ID = "playerId";
 	private static final String BOARD = "board";
 	private static final String JUMP = "jump";
 //	private static final String WP = "WP";
@@ -665,7 +664,7 @@ public class AbaloneLogicTest {
 	  				ImmutableList.<String>of(I, I, I, S, S, E, I, B, I, W, I, B, I, E, S, S, I, I, I),
 	  				ImmutableList.<String>of(I, I, S, S, E, I, W, I, W, I, W, I, W, I, E, S, S, I, I),
 	  				ImmutableList.<String>of(I, S, S, W, I, W, I, W, I, B, I, B, I, B, I, E, S, S, I),
-	  				ImmutableList.<String>of(S, S, E, I, E, I, E, I, B, I, B, I, B, I, W, I, W, S, S),
+	  				ImmutableList.<String>of(S, S, E, I, E, I, E, I, E, I, B, I, B, I, B, I, W, W, S),
 	  				ImmutableList.<String>of(S, E, I, E, I, E, I, E, I, E, I, E, I, B, I, E, I, E, S),
 	  				ImmutableList.<String>of(S, S, E, I, E, I, W, I, E, I, E, I, B, I, E, I, E, S, S),
 	  				ImmutableList.<String>of(I, S, S, E, I, B, I, E, I, E, I, E, I, E, I, E, S, S, I),

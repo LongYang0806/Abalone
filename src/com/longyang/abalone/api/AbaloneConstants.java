@@ -13,7 +13,7 @@ import com.google.common.collect.ImmutableList;
  */
 public class AbaloneConstants {
 	
-	public static final String PLAYER_ID = "player_id";
+	public static final String PLAYER_ID = "playerId";
 	public static final String AI_PLAYER = "artificial intelligence player";
 	public static final String GAME_VIEWER = "game viewer";
 	public static final String BOARD = "board";
@@ -94,6 +94,45 @@ public class AbaloneConstants {
 					ImmutableList.<Integer>of(10, 18)
 			);
 	
+	@SuppressWarnings("unchecked")
+	public static final List<ImmutableList<Integer>> scoreSquares = 
+			ImmutableList.<ImmutableList<Integer>>of(
+					// Row 0
+					ImmutableList.<Integer>of(0, 4), ImmutableList.<Integer>of(0, 6), 
+					ImmutableList.<Integer>of(0, 8), ImmutableList.<Integer>of(0, 10),
+					ImmutableList.<Integer>of(0, 12), ImmutableList.<Integer>of(0, 14), 
+					// Row 1
+					ImmutableList.<Integer>of(1, 3), ImmutableList.<Integer>of(1, 4),
+					ImmutableList.<Integer>of(1, 14), ImmutableList.<Integer>of(1, 15),
+					// Row 2
+					ImmutableList.<Integer>of(2, 2), ImmutableList.<Integer>of(2, 3),
+					ImmutableList.<Integer>of(2, 15), ImmutableList.<Integer>of(2, 16), 
+					// Row 3
+					ImmutableList.<Integer>of(3, 1), ImmutableList.<Integer>of(3, 2),
+					ImmutableList.<Integer>of(3, 16), ImmutableList.<Integer>of(3, 17),
+					// Row 4
+					ImmutableList.<Integer>of(4, 0), ImmutableList.<Integer>of(4, 1),
+					ImmutableList.<Integer>of(4, 17), ImmutableList.<Integer>of(4, 18),
+					// Row 5
+					ImmutableList.<Integer>of(5, 0), ImmutableList.<Integer>of(5, 18),
+					// Row 6
+					ImmutableList.<Integer>of(6, 0), ImmutableList.<Integer>of(6, 1),
+					ImmutableList.<Integer>of(6, 17), ImmutableList.<Integer>of(6, 18),
+					// Row 7
+					ImmutableList.<Integer>of(7, 1), ImmutableList.<Integer>of(7, 2),
+					ImmutableList.<Integer>of(7, 16), ImmutableList.<Integer>of(7, 17),
+					// Row 8
+					ImmutableList.<Integer>of(8, 2), ImmutableList.<Integer>of(8, 3),
+					ImmutableList.<Integer>of(8, 15), ImmutableList.<Integer>of(8, 16),
+					// Row 9
+					ImmutableList.<Integer>of(9, 3), ImmutableList.<Integer>of(9, 4),
+					ImmutableList.<Integer>of(9, 14), ImmutableList.<Integer>of(9, 15),
+					// Row 10
+					ImmutableList.<Integer>of(10, 4), ImmutableList.<Integer>of(10, 6), 
+					ImmutableList.<Integer>of(10, 8), ImmutableList.<Integer>of(10, 10),
+					ImmutableList.<Integer>of(10, 12), ImmutableList.<Integer>of(10, 14)
+			);
+	
 	/*
 	 * Initial board for initial operations.
 	 */
@@ -112,7 +151,7 @@ public class AbaloneConstants {
   				ImmutableList.<String>of(I, I, I, I, S, I, S, I, S, I, S, I, S, I, S, I, I, I, I)
   		);
 	
-	/*
+	/**
 	 * comparator throws exception if two lists are equal.
 	 */
 	public static Comparator<List<Integer>> listComparator = new Comparator<List<Integer>>(){

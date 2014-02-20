@@ -3,6 +3,7 @@ package com.longyang.abalone.api;
 public enum Square {
 	W, // Square occupied by White piece.
 	B, // Square occupied by Black piece.
+	S, // Score Square.
 	E, // Empty Square.
 	I; // Illegal Square.
 	

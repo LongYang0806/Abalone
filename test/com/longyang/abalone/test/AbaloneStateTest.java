@@ -13,6 +13,7 @@ import com.longyang.abalone.api.AbaloneConstants;
 import com.longyang.abalone.api.Square;
 import com.longyang.abalone.api.Turn;
 import com.longyang.abalone.impl.AbaloneState;
+import com.longyang.abalone.impl.AbaloneUtilities;
 
 @RunWith(JUnit4.class)
 public class AbaloneStateTest {
@@ -68,7 +69,7 @@ public class AbaloneStateTest {
 						// List for WP's pieces' moves
 						ImmutableList.<ImmutableList<Integer>>of(
 								ImmutableList.<Integer>of(0, 1, 0, 3),
-								ImmutableList.<Integer>of(0, 3, 0, 7)
+								ImmutableList.<Integer>of(0, 3, 1, 7)
 						),
 						// List for BP pieces' moves
 						ImmutableList.<ImmutableList<Integer>>of(
@@ -76,5 +77,41 @@ public class AbaloneStateTest {
 						)
 				);
 		abaloneState.check2And3Pieces(jump.get(0));
+	}
+	
+	@Test
+	public void testEquals(){
+		List<ImmutableList<ImmutableList<Integer>>> jump1 = 
+				ImmutableList.<ImmutableList<ImmutableList<Integer>>>of(
+						// List for WP's pieces' moves
+						ImmutableList.<ImmutableList<Integer>>of(
+								ImmutableList.<Integer>of(6, 6, 5, 7),
+								ImmutableList.<Integer>of(6, 6, 5, 7)
+						),
+						// List for BP pieces' moves
+						ImmutableList.<ImmutableList<Integer>>of(
+								ImmutableList.<Integer>of(7, 5, 6, 6)
+						)
+				);
+		
+		List<ImmutableList<ImmutableList<Integer>>> jump2 = 
+				ImmutableList.<ImmutableList<ImmutableList<Integer>>>of(
+						// List for WP's pieces' moves
+						ImmutableList.<ImmutableList<Integer>>of(
+								ImmutableList.<Integer>of(6, 6, 5, 7),
+								ImmutableList.<Integer>of(6, 6, 5, 7)
+						),
+						// List for BP pieces' moves
+						ImmutableList.<ImmutableList<Integer>>of(
+								ImmutableList.<Integer>of(7, 5, 6, 6)
+						)
+				);
+		
+		AbaloneState state1 = new AbaloneState(Turn.WP, ImmutableList.of(1, 2), 
+				AbaloneUtilities.stringBoardToSquareBoard(AbaloneConstants.initialBoard), jump1, null);
+		AbaloneState state2 = new AbaloneState(Turn.WP, ImmutableList.of(1, 2), 
+				AbaloneUtilities.stringBoardToSquareBoard(AbaloneConstants.initialBoard), jump2, null);
+		
+		assertTrue(state1.equals(state2));
 	}
 }

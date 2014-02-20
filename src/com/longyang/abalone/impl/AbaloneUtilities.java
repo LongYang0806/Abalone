@@ -1,12 +1,12 @@
 package com.longyang.abalone.impl;
 
 import java.util.List;
-
-import com.longyang.abalone.api.AbaloneConstants;
-import com.longyang.abalone.api.Square;
+import java.util.Map;
 
 import com.google.common.collect.ImmutableList;
+import com.longyang.abalone.api.AbaloneConstants;
 import com.longyang.abalone.api.Square;
+import com.longyang.abalone.api.Turn;
 
 /**
  * Class used to provide all kinds of utilities which can make other parts' work easier.
@@ -65,9 +65,27 @@ public class AbaloneUtilities {
 			return Square.E;
 		}else if(AbaloneConstants.I.equals(str)){
 			return Square.I;
+		}else if(AbaloneConstants.S.equals(str)){
+			return Square.S;
 		}else{
 			throw new IllegalArgumentException("Input str is invalid.");
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static AbaloneState gameApiStateToAbaloneState(Map<String, Object> gameApiState,
+			Turn turn, List<Integer> playerIds){
+		if(gameApiState == null || gameApiState.isEmpty()){
+			// return empty state.
+			return new AbaloneState(Turn.WP, ImmutableList.<Integer>of(), 
+					ImmutableList.<ImmutableList<Square>>of(), 
+					ImmutableList.<ImmutableList<ImmutableList<Integer>>>of(), null);
+		}
+		
+		// can not be isGameEnd state at first.
+		return new AbaloneState(turn, ImmutableList.<Integer>copyOf(playerIds), 
+				AbaloneUtilities.stringBoardToSquareBoard((List<ImmutableList<String>>)gameApiState.get(AbaloneConstants.BOARD)), 
+				(List<ImmutableList<ImmutableList<Integer>>>)gameApiState.get(AbaloneConstants.JUMP), null);
 	}
 	
 	/**
