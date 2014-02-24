@@ -55,7 +55,7 @@ public interface View {
 	 * @param board input updated board from presenter
 	 * @param previousJumps input previous jumps made by this player.
 	 */
-	public void nextPieceJump(List<ImmutableList<String>> board, List<Integer> previousJumps);
+	public void nextPieceJump(List<ImmutableList<String>> board, List<Jump> previousJumps);
 	
 	/**
 	 * After player makes all the jumps, he/she will call 
