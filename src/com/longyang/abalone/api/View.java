@@ -43,8 +43,9 @@ public interface View {
 	/**
 	 * Because there is no invisible materials, no need to separate players and viewers.
 	 * @param board input board used to display the board on screen.
+	 * @param message input message used to notify player the status of the game.
 	 */
-	public void setPlayerState(List<ImmutableList<String>> board);
+	public void setPlayerState(List<ImmutableList<Square>> board, AbaloneMessage message);
 	
 	/**
 	 * Ask the player to choose the next piece to jump.
@@ -54,14 +55,19 @@ public interface View {
 	 * 
 	 * @param board input updated board from presenter
 	 * @param previousJumps input previous jumps made by this player.
+	 * @param message input message used to notify player the status of the game.
 	 */
-	public void nextPieceJump(List<ImmutableList<String>> board, List<Jump> previousJumps);
+	public void nextPieceJump(List<ImmutableList<Square>> board, List<Jump> previousJumps, 
+			AbaloneMessage message);
 	
 	/**
 	 * After player makes all the jumps, he/she will call 
 	 * {@link AbalonePresenter#finishedJumpingPieces()} to finish the jumps, and it will call this 
 	 * method to update graphics with the updated board.
 	 * @param board input updated board.
+	 * @param previousJumps input previous jumps made by the player.
+	 * @param message input message used to notify player the status of the game.
 	 */
-	public void finishMoves(List<ImmutableList<String>> board);
+	public void finishMoves(List<ImmutableList<Square>> board, List<Jump> previousJumps, 
+			AbaloneMessage message);
 }

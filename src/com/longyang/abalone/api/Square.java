@@ -23,4 +23,22 @@ public enum Square {
 		return this == B;
 	}
 	
+	@Override
+	public String toString(){
+		switch(this){
+			case W:
+				return AbaloneConstants.W;
+			case B:
+				return AbaloneConstants.B;
+			case S:
+				return AbaloneConstants.S;
+			case E:
+				return AbaloneConstants.E;
+			case I:
+				return AbaloneConstants.I;
+			default:
+				return null;
+		}
+	}
+	
 }

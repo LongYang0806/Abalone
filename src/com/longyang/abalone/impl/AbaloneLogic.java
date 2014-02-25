@@ -61,9 +61,10 @@ public class AbaloneLogic {
   			(lastMove.size() == 4 && resultAbaloneState.getIsGameEnd().get() == true));
   }
 
-	public List<Operation> getInitialMove(int wId, int bId) {
+	public List<Operation> getInitialMove(List<Integer> playerIds) {
+		int whitePlayerId = playerIds.get(0);
 		return ImmutableList.<Operation>of(
-				new SetTurn(wId),
+				new SetTurn(whitePlayerId),
 				new Set(AbaloneConstants.BOARD, AbaloneConstants.initialBoard),
 				new Set(AbaloneConstants.JUMP, ImmutableList.<Operation>of())
 				);

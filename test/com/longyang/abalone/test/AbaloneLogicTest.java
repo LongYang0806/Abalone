@@ -201,7 +201,7 @@ public class AbaloneLogicTest {
   }
 	
 	private List<Operation> getInitialOperations() {
-    return abaloneLogic.getInitialMove(wId, bId);
+    return abaloneLogic.getInitialMove(ImmutableList.<Integer>of(wId, bId));
   }
 	
 	@Test
