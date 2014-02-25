@@ -34,8 +34,6 @@ public class AbaloneLogicTest {
 	private static final String PLAYER_ID = "playerId";
 	private static final String BOARD = "board";
 	private static final String JUMP = "jump";
-//	private static final String WP = "WP";
-//	private static final String BP = "BP";
 	private static final String W = "White Piece";
 	private static final String B = "Black Piece";
 	private static final String E = "Empty Square";

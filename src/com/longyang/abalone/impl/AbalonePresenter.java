@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.longyang.abalone.api.AbaloneMessage;
 import com.longyang.abalone.api.GameApi.Container;
 import com.longyang.abalone.api.GameApi.Operation;
@@ -43,7 +44,7 @@ public class AbalonePresenter {
 	private List<ImmutableList<Square>> newBoard;
 	private List<Operation> moves;
 	private AbaloneMessage abaloneMessage;
-	private List<Jump> jumps;
+	private List<Jump> jumps = Lists.newLinkedList();
 	private int x;
 	private int y;
 	
@@ -145,6 +146,9 @@ public class AbalonePresenter {
 				jumps.add(jump);
 			}
 		}
+		List<ImmutableList<Square>> appliedBoard = 
+				AbaloneUtilities.boardAppliedJumps(abaloneState.getBoard(), jumps);
+		view.nextPieceJump(appliedBoard, jumps, AbaloneMessage.UNDERGOING);
 	}
 	
 	/**
@@ -168,10 +172,11 @@ public class AbalonePresenter {
 			throw new RuntimeException("You have to make the jumps before finishing this round.");
 		}
 		Collections.sort(jumps);
+		board = abaloneState.getBoard();
 		if(jumps.size() == 1){
 			// only one piece's jump can not change the game message ({@link AbaloneMessage})
+			abaloneMessage = AbaloneMessage.UNDERGOING;
 		}else if(jumps.size() <= 3){
-			board = abaloneState.getBoard();
 			/*
 			 * Because whether the jumps are legal has been checked in the view or front end code, 
 			 * we just need to figure out the "pushed pieces", and whether we have enter into a 
@@ -181,6 +186,10 @@ public class AbalonePresenter {
 				case LEFT_HORIZONTAL:
 					x = jumps.get(0).getDestinationX();
 					y = jumps.get(0).getDestinationY();
+					if(board.get(x).get(y) == Square.E){
+						abaloneMessage = AbaloneMessage.UNDERGOING;
+						break;
+					}
 					while(board.get(x).get(y - 1) != Square.S && board.get(x).get(y - 2) != Square.E){
 						jumps.add(new Jump(x, y, x, y - 2));
 						y = y - 2;
@@ -196,6 +205,10 @@ public class AbalonePresenter {
 				case RIGHT_HORIZONTAL:
 					x = jumps.get(jumps.size() - 1).getDestinationX();
 					y = jumps.get(jumps.size() - 1).getDestinationY();
+					if(board.get(x).get(y) == Square.E){
+						abaloneMessage = AbaloneMessage.UNDERGOING;
+						break;
+					}
 					while(board.get(x).get(y + 1) != Square.S && board.get(x).get(y + 2) != Square.E){
 						jumps.add(new Jump(x, y, x, y + 2));
 						y = y + 2;
@@ -212,6 +225,10 @@ public class AbalonePresenter {
 				case UPPER_LEFT_DIAGONAL:
 					x = jumps.get(0).getDestinationX();
 					y = jumps.get(0).getDestinationY();
+					if(board.get(x).get(y) == Square.E){
+						abaloneMessage = AbaloneMessage.UNDERGOING;
+						break;
+					}
 					while(board.get(x - 1).get(y - 1) != Square.S && board.get(x - 1).get(y - 1) != Square.E){
 						jumps.add(new Jump(x, y, x - 1, y - 1));
 						x = x - 1;
@@ -228,6 +245,10 @@ public class AbalonePresenter {
 				case UPPER_RIGHT_DIAGONAL:
 					x = jumps.get(0).getDestinationX();
 					y = jumps.get(0).getDestinationY();
+					if(board.get(x).get(y) == Square.E){
+						abaloneMessage = AbaloneMessage.UNDERGOING;
+						break;
+					}
 					while(board.get(x - 1).get(y + 1) != Square.S && board.get(x - 1).get(y + 1) != Square.E){
 						jumps.add(new Jump(x, y, x - 1, y + 1));
 						x = x - 1;
@@ -244,6 +265,10 @@ public class AbalonePresenter {
 				case LOWER_LEFT_DIAGONAL:
 					x = jumps.get(jumps.size() - 1).getDestinationX();
 					y = jumps.get(jumps.size() - 1).getDestinationY();
+					if(board.get(x).get(y) == Square.E){
+						abaloneMessage = AbaloneMessage.UNDERGOING;
+						break;
+					}
 					while(board.get(x + 1).get(y - 1) != Square.S && board.get(x + 1).get(y - 1) != Square.E){
 						jumps.add(new Jump(x, y, x + 1, y - 1));
 						x = x + 1;
@@ -260,6 +285,10 @@ public class AbalonePresenter {
 				case LOWER_RIGHT_DIAGONAL:
 					x = jumps.get(jumps.size() - 1).getDestinationX();
 					y = jumps.get(jumps.size() - 1).getDestinationY();
+					if(board.get(x).get(y) == Square.E){
+						abaloneMessage = AbaloneMessage.UNDERGOING;
+						break;
+					}
 					while(board.get(x + 1).get(y + 1) != Square.S && board.get(x + 1).get(y + 1) != Square.E){
 						jumps.add(new Jump(x, y, x + 1, y + 1));
 						x = x + 1;
@@ -278,11 +307,13 @@ public class AbalonePresenter {
 			throw new RuntimeException("You can only place three piece jumps!");
 		}
 		newBoard = AbaloneUtilities.boardAppliedJumps(board, jumps);
-		view.finishMoves(board, jumps, abaloneMessage);
+		view.finishMoves(newBoard, jumps, abaloneMessage);
+		boolean isGameOver = abaloneMessage == AbaloneMessage.GAMEOVER ? true : false;
 		moves = AbaloneUtilities.getMoves(
-				AbaloneUtilities.squareBoardToStringBoard(board),
+				AbaloneUtilities.squareBoardToStringBoard(newBoard),
 				Jump.listJumpToListInteger(jumps), 
-				abaloneState.getPlayerIds().get(abaloneState.getTurn().getOppositeTurn().ordinal()));
+				abaloneState.getPlayerIds().get(abaloneState.getTurn().getOppositeTurn().ordinal()),
+				isGameOver);
 		container.sendMakeMove(moves);
 	}
 	
@@ -291,28 +322,33 @@ public class AbalonePresenter {
 	 * @param jump input jump, and the size of jump should be inside [2, 3] inclusively.
 	 * @return one of the six directions.
 	 */
-	private Direction getJumpDirection(List<Jump> jump){
-		AbaloneUtilities.check(jump.size() >= 2 && jump.size() <= 3, 
+	private Direction getJumpDirection(List<Jump> jumpList){
+		AbaloneUtilities.check(jumpList.size() >= 2 && jumpList.size() <= 3, 
 				"Size of the input jump list should be [2, 3] inclusively");
-		if(jump.get(0).getOriginalX() == jump.get(0).getDestinationX()){
-			if(jump.get(0).getOriginalY() < jump.get(0).getDestinationY()){
+		
+		if(jumpList.get(0).getOriginalX() == jumpList.get(0).getDestinationX()){
+			if(jumpList.get(0).getOriginalY() < jumpList.get(0).getDestinationY()){
 				return Direction.RIGHT_HORIZONTAL;
 			}else{
 				return Direction.LEFT_HORIZONTAL;
 			}
-		}else if(jump.get(0).getOriginalX() < jump.get(0).getDestinationX()){
-			if(jump.get(0).getOriginalY() < jump.get(0).getDestinationY()){
+		}else if(jumpList.get(0).getOriginalX() > jumpList.get(0).getDestinationX()){
+			if(jumpList.get(0).getOriginalY() < jumpList.get(0).getDestinationY()){
 				return Direction.UPPER_RIGHT_DIAGONAL;
 			}else{
 				return Direction.UPPER_LEFT_DIAGONAL;
 			}
 		}else{
-			if(jump.get(0).getOriginalY() < jump.get(0).getDestinationY()){
+			if(jumpList.get(0).getOriginalY() < jumpList.get(0).getDestinationY()){
 				return Direction.LOWER_RIGHT_DIAGONAL;
 			}else{
 				return Direction.LOWER_LEFT_DIAGONAL;
 			}
 		}
+	}
+	
+	public List<Jump> getJumps(){
+		return jumps;
 	}
 
 }

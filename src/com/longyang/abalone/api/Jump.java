@@ -26,16 +26,16 @@ public class Jump implements Comparable<Jump>{
 	 * @param destination_x input destination x coordinate.
 	 * @param destination_y input destination y coordinate.
 	 * @throws IllegalArgumentException if input data break the data validation 
-	 * (x: [0, 18]; y: [0, 10])
+	 * (x: [0, 10]; y: [0, 18])
 	 */
 	public Jump(int original_x, int original_y, int destination_x, int destination_y){
 		/*
 		 * check the input data's validation before assigning.
 		 */
-		AbaloneUtilities.check(original_x >= 0 && original_x <= 18);
-		AbaloneUtilities.check(destination_x >= 0 && destination_x <= 18);
-		AbaloneUtilities.check(original_y >= 0 && original_y <= 10);
-		AbaloneUtilities.check(destination_y >= 0 && destination_y <= 10);
+		AbaloneUtilities.check(original_x >= 0 && original_x <= 10);
+		AbaloneUtilities.check(destination_x >= 0 && destination_x <= 10);
+		AbaloneUtilities.check(original_y >= 0 && original_y <= 18);
+		AbaloneUtilities.check(destination_y >= 0 && destination_y <= 18);
 		this.original_x = original_x;
 		this.original_y = original_y;
 		this.destination_x = destination_x;
@@ -147,5 +147,11 @@ public class Jump implements Comparable<Jump>{
 	
 	public int getDestinationY(){
 		return destination_y;
+	}
+	
+	@Override
+	public String toString(){
+		return "[(" + original_x + "," + original_y + "), " + 
+				"(" + destination_x + "," + destination_y + ")]";
 	}
 }

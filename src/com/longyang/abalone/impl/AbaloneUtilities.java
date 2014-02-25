@@ -9,6 +9,7 @@ import com.longyang.abalone.api.AbaloneConstants;
 import com.longyang.abalone.api.GameApi.Operation;
 import com.longyang.abalone.api.GameApi.Set;
 import com.longyang.abalone.api.GameApi.SetTurn;
+import com.longyang.abalone.api.GameApi.EndGame;
 import com.longyang.abalone.api.Jump;
 import com.longyang.abalone.api.Square;
 import com.longyang.abalone.api.Turn;
@@ -173,13 +174,16 @@ public class AbaloneUtilities {
 	 * @return {@code List<Operation>} operations.
 	 */
 	public static List<Operation> getMoves(List<ImmutableList<String>> board, 
-			List<ImmutableList<Integer>> jumps, int playerId){
+			List<ImmutableList<Integer>> jumps, int playerId, boolean isGameOver){
 		check(board != null && jumps != null, "Board and jumps can not be null!");
-		return ImmutableList.<Operation>of(
-				new SetTurn(playerId),
-				new Set(AbaloneConstants.BOARD, board),
-				new Set(AbaloneConstants.JUMP, jumps)
-		);
+		ImmutableList.Builder<Operation> operations = ImmutableList.<Operation>builder();
+		operations.add(new SetTurn(playerId));
+		operations.add(new Set(AbaloneConstants.BOARD, board));
+		operations.add(new Set(AbaloneConstants.JUMP, jumps));
+		if(isGameOver){
+			operations.add(new EndGame(playerId));
+		}
+		return operations.build();
 	}
 	
 	/**
