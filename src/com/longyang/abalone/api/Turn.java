@@ -30,4 +30,25 @@ public enum Turn {
 			return WP;
 		}
 	}
+	
+	@Override
+	public String toString(){
+		if(this == WP){
+			return "White Hand";
+		}else{
+			return "Red Hand";
+		}
+	}
+	
+	/**
+	 * Method used to convert {@link Turn} to {@link Square}
+	 * @return W is this is WP, B otherwise.
+	 */
+	public Square getSquare(){
+		if(this == WP){
+			return Square.W;
+		}else{
+			return Square.B;
+		}
+	}
 }

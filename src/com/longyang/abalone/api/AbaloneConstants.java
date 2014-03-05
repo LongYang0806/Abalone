@@ -18,11 +18,13 @@ public class AbaloneConstants {
 	public static final String GAME_VIEWER = "game viewer";
 	public static final String BOARD = "board";
 	public static final String JUMP = "jump";
-	public static final String W = "White Piece";
-	public static final String B = "Black Piece";
-	public static final String E = "Empty Square";
-	public static final String S = "Score Square";
-	public static final String I = "Illegal Square";
+	public static final String W = "W";
+	public static final String B = "B";
+	public static final String E = "E";
+	public static final String S = "S";
+	public static final String I = "I";
+	public static final int boardRowNum = 11;
+	public static final int boardColumnNum = 19;
 	
 	@SuppressWarnings("unchecked")
 	public static final List<ImmutableList<Integer>> illegalSquares = 
@@ -141,11 +143,11 @@ public class AbaloneConstants {
   				ImmutableList.<String>of(I, I, I, I, S, I, S, I, S, I, S, I, S, I, S, I, I, I, I),
   				ImmutableList.<String>of(I, I, I, S, S, W, I, W, I, E, I, B, I, B, S, S, I, I, I),
   				ImmutableList.<String>of(I, I, S, S, W, I, W, I, W, I, B, I, B, I, B, S, S, I, I),
-  				ImmutableList.<String>of(I, S, S, E, I, W, I, W, I, E, I, B, I, B, E, I, S, S, I),
+  				ImmutableList.<String>of(I, S, S, E, I, W, I, W, I, E, I, B, I, B, I, E, S, S, I),
   				ImmutableList.<String>of(S, S, E, I, E, I, E, I, E, I, E, I, E, I, E, I, E, S, S),
   				ImmutableList.<String>of(S, E, I, E, I, E, I, E, I, E, I, E, I, E, I, E, I, E, S),
   				ImmutableList.<String>of(S, S, E, I, E, I, E, I, E, I, E, I, E, I, E, I, E, S, S),
-  				ImmutableList.<String>of(I, S, S, E, I, B, I, B, I, E, I, W, I, W, E, I, S, S, I),
+  				ImmutableList.<String>of(I, S, S, E, I, B, I, B, I, E, I, W, I, W, I, E, S, S, I),
   				ImmutableList.<String>of(I, I, S, S, B, I, B, I, B, I, W, I, W, I, W, S, S, I, I),
   				ImmutableList.<String>of(I, I, I, S, S, B, I, B, I, E, I, W, I, W, S, S, I, I, I),
   				ImmutableList.<String>of(I, I, I, I, S, I, S, I, S, I, S, I, S, I, S, I, I, I, I)

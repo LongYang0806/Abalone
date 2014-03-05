@@ -45,7 +45,8 @@ public interface View {
 	 * @param board input board used to display the board on screen.
 	 * @param message input message used to notify player the status of the game.
 	 */
-	public void setPlayerState(List<ImmutableList<Square>> board, AbaloneMessage message);
+	public void setPlayerState(List<ImmutableList<Square>> board, boolean[][] enableMatrix, 
+			AbaloneMessage message);
 	
 	/**
 	 * Ask the player to choose the next piece to jump.
@@ -61,13 +62,31 @@ public interface View {
 			AbaloneMessage message);
 	
 	/**
-	 * After player makes all the jumps, he/she will call 
-	 * {@link AbalonePresenter#finishedJumpingPieces()} to finish the jumps, and it will call this 
-	 * method to update graphics with the updated board.
-	 * @param board input updated board.
-	 * @param previousJumps input previous jumps made by the player.
-	 * @param message input message used to notify player the status of the game.
+	 * Method to be implement for place the pieces after {@code AbalonePresenter#pieceHold()}
+	 * @param board
+	 * @param possiblePlaces
+	 * @param message
 	 */
-	public void finishMoves(List<ImmutableList<Square>> board, List<Jump> previousJumps, 
-			AbaloneMessage message);
+	public void toPlacePiece(List<ImmutableList<Square>> board, boolean[][] enableMatrix,
+			boolean btnEnable, Turn turn, AbaloneMessage message);
+	
+	/**
+	 * Method to be implemented for holding the pieces after {@code AbalonePresenter#piecePlace()}
+	 * @param board
+	 * @param enableSuqare
+	 * @param message
+	 */
+	public void toHoldPiece(List<ImmutableList<Square>> board, boolean[][] enableSquare, 
+			boolean btnEnable, Turn turn, AbaloneMessage message);
+	
+//	/**
+//	 * After player makes all the jumps, he/she will call 
+//	 * {@link AbalonePresenter#finishedJumpingPieces()} to finish the jumps, and it will call this 
+//	 * method to update graphics with the updated board.
+//	 * @param board input updated board.
+//	 * @param previousJumps input previous jumps made by the player.
+//	 * @param message input message used to notify player the status of the game.
+//	 */
+//	public void finishMoves(List<ImmutableList<Square>> board, List<Jump> previousJumps, 
+//			AbaloneMessage message);
 }

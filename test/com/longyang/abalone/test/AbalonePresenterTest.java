@@ -151,7 +151,7 @@ public class AbalonePresenterTest {
 	public void testInitialStateForViewer(){
 		abalonePresenter.updateUI(createUpdateUI(viewerId, wId, stateAfterInitial));
 		verify(mockView).setPlayerState(AbaloneUtilities.stringBoardToSquareBoard(initialBoard), 
-				AbaloneMessage.UNDERGOING);
+				new boolean[11][19], AbaloneMessage.UNDERGOING);
 	}
 	
 	@Test
@@ -160,7 +160,7 @@ public class AbalonePresenterTest {
 		verify(mockContainer).sendMakeMove(abaloneLogic.getInitialMove(playerIds));
 		abalonePresenter.updateUI(createUpdateUI(wId, wId, stateAfterInitial));
 		verify(mockView).setPlayerState(AbaloneUtilities.stringBoardToSquareBoard(initialBoard),
-				AbaloneMessage.UNDERGOING);
+				new boolean[11][19], AbaloneMessage.UNDERGOING);
 		verify(mockView).nextPieceJump(AbaloneUtilities.stringBoardToSquareBoard(initialBoard),
 				ImmutableList.<Jump>of(), AbaloneMessage.UNDERGOING);
 	}
@@ -169,7 +169,7 @@ public class AbalonePresenterTest {
 	public void testInitialStateForBP(){
 		abalonePresenter.updateUI(createUpdateUI(bId, bId, stateAfterInitial));
 		verify(mockView).setPlayerState(AbaloneUtilities.stringBoardToSquareBoard(initialBoard),
-				AbaloneMessage.UNDERGOING);
+				new boolean[11][19], AbaloneMessage.UNDERGOING);
 		verify(mockView).nextPieceJump(AbaloneUtilities.stringBoardToSquareBoard(initialBoard),
 				ImmutableList.<Jump>of(), AbaloneMessage.UNDERGOING);
 	}
@@ -178,7 +178,7 @@ public class AbalonePresenterTest {
 	public void testJumpsByWP(){
 		abalonePresenter.updateUI(createUpdateUI(wId, wId, stateAfterInitial));
 		verify(mockView).setPlayerState(AbaloneUtilities.stringBoardToSquareBoard(initialBoard),
-				AbaloneMessage.UNDERGOING);
+				new boolean[11][19], AbaloneMessage.UNDERGOING);
 		verify(mockView).nextPieceJump(AbaloneUtilities.stringBoardToSquareBoard(initialBoard), 
 				ImmutableList.<Jump>of(), AbaloneMessage.UNDERGOING);
 		assertEquals(abalonePresenter.getJumps().size(), 0);
@@ -197,7 +197,7 @@ public class AbalonePresenterTest {
 	public void testJumpByBP(){
 		abalonePresenter.updateUI(createUpdateUI(bId, bId, stateAfterInitial));
 		verify(mockView).setPlayerState(AbaloneUtilities.stringBoardToSquareBoard(initialBoard),
-				AbaloneMessage.UNDERGOING);
+				new boolean[11][19], AbaloneMessage.UNDERGOING);
 		verify(mockView).nextPieceJump(AbaloneUtilities.stringBoardToSquareBoard(initialBoard), 
 				ImmutableList.<Jump>of(), AbaloneMessage.UNDERGOING);
 		assertEquals(abalonePresenter.getJumps().size(), 0);
@@ -216,7 +216,7 @@ public class AbalonePresenterTest {
 	public void testFinished1JumpByWP(){
 		abalonePresenter.updateUI(createUpdateUI(wId, wId, stateAfterInitial));
 		verify(mockView).setPlayerState(AbaloneUtilities.stringBoardToSquareBoard(initialBoard),
-				AbaloneMessage.UNDERGOING);
+				new boolean[11][19], AbaloneMessage.UNDERGOING);
 		verify(mockView).nextPieceJump(AbaloneUtilities.stringBoardToSquareBoard(initialBoard), 
 				ImmutableList.<Jump>of(), AbaloneMessage.UNDERGOING);
 		assertEquals(abalonePresenter.getJumps().size(), 0);
@@ -231,18 +231,16 @@ public class AbalonePresenterTest {
 				ImmutableList.<Jump>of(firstJump), AbaloneMessage.UNDERGOING);
 		
 		abalonePresenter.finishedJumpingPieces();
-		verify(mockView).finishMoves(boardAfterFirstJump, 
-				ImmutableList.<Jump>of(firstJump), AbaloneMessage.UNDERGOING);
 		verify(mockContainer).sendMakeMove(
 				AbaloneUtilities.getMoves(AbaloneUtilities.squareBoardToStringBoard(boardAfterFirstJump), 
-						Jump.listJumpToListInteger(ImmutableList.<Jump>of(firstJump)), bId, false));
+						Jump.listJumpToListInteger(ImmutableList.<Jump>of(firstJump)), bId, false, 0));
 	}
 	
 	@Test
 	public void testFinished2JumpsByWPNoPush(){
 		abalonePresenter.updateUI(createUpdateUI(wId, wId, stateAfterInitial));
 		verify(mockView).setPlayerState(AbaloneUtilities.stringBoardToSquareBoard(initialBoard),
-				AbaloneMessage.UNDERGOING);
+				new boolean[11][19], AbaloneMessage.UNDERGOING);
 		verify(mockView).nextPieceJump(AbaloneUtilities.stringBoardToSquareBoard(initialBoard), 
 				ImmutableList.<Jump>of(), AbaloneMessage.UNDERGOING);
 		assertEquals(abalonePresenter.getJumps().size(), 0);
@@ -266,18 +264,16 @@ public class AbalonePresenterTest {
 				ImmutableList.<Jump>of(firstJump, secondJump), AbaloneMessage.UNDERGOING);
 		
 		abalonePresenter.finishedJumpingPieces();
-		verify(mockView).finishMoves(boardAfterSecondJump, 
-				ImmutableList.<Jump>of(firstJump, secondJump), AbaloneMessage.UNDERGOING);
 		verify(mockContainer).sendMakeMove(
 				AbaloneUtilities.getMoves(AbaloneUtilities.squareBoardToStringBoard(boardAfterSecondJump), 
-						Jump.listJumpToListInteger(ImmutableList.<Jump>of(firstJump, secondJump)), bId, false));
+						Jump.listJumpToListInteger(ImmutableList.<Jump>of(firstJump, secondJump)), bId, false, 0));
 	}
 	
 	@Test
 	public void testFinished2JumpsWithPushes(){
 		abalonePresenter.updateUI(createUpdateUI(bId, bId, specialBoardState));
 		verify(mockView).setPlayerState(AbaloneUtilities.stringBoardToSquareBoard(specialBoard),
-				AbaloneMessage.UNDERGOING);
+				new boolean[11][19], AbaloneMessage.UNDERGOING);
 		verify(mockView).nextPieceJump(AbaloneUtilities.stringBoardToSquareBoard(specialBoard), 
 				ImmutableList.<Jump>of(), AbaloneMessage.UNDERGOING);
 		assertEquals(abalonePresenter.getJumps().size(), 0);
@@ -305,19 +301,17 @@ public class AbalonePresenterTest {
 		List<ImmutableList<Square>> boardAfterThirdJump = AbaloneUtilities.boardAppliedJumps(
 				AbaloneUtilities.stringBoardToSquareBoard(specialBoard), 
 				ImmutableList.<Jump>of(firstJump, secondJump, thirdJump));
-		verify(mockView).finishMoves(boardAfterThirdJump, 
-				ImmutableList.<Jump>of(firstJump, secondJump, thirdJump), AbaloneMessage.UNDERGOING);
 		verify(mockContainer).sendMakeMove(
 				AbaloneUtilities.getMoves(AbaloneUtilities.squareBoardToStringBoard(boardAfterThirdJump), 
 						Jump.listJumpToListInteger(ImmutableList.<Jump>of(firstJump, secondJump, thirdJump)), 
-						wId, false));
+						wId, false, 0));
 	}
 	
 	@Test
 	public void testFinished3JumpsWithPushes(){
 		abalonePresenter.updateUI(createUpdateUI(wId, wId, specialBoardState));
 		verify(mockView).setPlayerState(AbaloneUtilities.stringBoardToSquareBoard(specialBoard),
-				AbaloneMessage.UNDERGOING);
+				new boolean[11][19], AbaloneMessage.UNDERGOING);
 		verify(mockView).nextPieceJump(AbaloneUtilities.stringBoardToSquareBoard(specialBoard), 
 				ImmutableList.<Jump>of(), AbaloneMessage.UNDERGOING);
 		assertEquals(abalonePresenter.getJumps().size(), 0);
@@ -354,19 +348,17 @@ public class AbalonePresenterTest {
 		List<ImmutableList<Square>> boardAfterFourthJump = AbaloneUtilities.boardAppliedJumps(
 				AbaloneUtilities.stringBoardToSquareBoard(specialBoard), 
 				ImmutableList.<Jump>of(firstJump, secondJump, thirdJump, fourthJump));
-		verify(mockView).finishMoves(boardAfterFourthJump, 
-				ImmutableList.<Jump>of(thirdJump, secondJump, firstJump, fourthJump), AbaloneMessage.UNDERGOING);
 		verify(mockContainer).sendMakeMove(
 				AbaloneUtilities.getMoves(AbaloneUtilities.squareBoardToStringBoard(boardAfterFourthJump), 
 						Jump.listJumpToListInteger(ImmutableList.<Jump>of(thirdJump, secondJump, 
-								firstJump, fourthJump)), bId, false));
+								firstJump, fourthJump)), bId, false, 0));
 	}
 	
 	@Test
 	public void testFinished2JumpsWithPushAndWin(){
 		abalonePresenter.updateUI(createUpdateUI(bId, bId, specialBoardState));
 		verify(mockView).setPlayerState(AbaloneUtilities.stringBoardToSquareBoard(specialBoard),
-				AbaloneMessage.UNDERGOING);
+				new boolean[11][19], AbaloneMessage.UNDERGOING);
 		verify(mockView).nextPieceJump(AbaloneUtilities.stringBoardToSquareBoard(specialBoard), 
 				ImmutableList.<Jump>of(), AbaloneMessage.UNDERGOING);
 		assertEquals(abalonePresenter.getJumps().size(), 0);
@@ -394,12 +386,36 @@ public class AbalonePresenterTest {
 		List<ImmutableList<Square>> boardAfterThirdJump = AbaloneUtilities.boardAppliedJumps(
 				AbaloneUtilities.stringBoardToSquareBoard(specialBoard), 
 				ImmutableList.<Jump>of(thirdJump, firstJump, secondJump));
-		verify(mockView).finishMoves(boardAfterThirdJump, 
-				ImmutableList.<Jump>of(firstJump, secondJump, thirdJump), AbaloneMessage.GAMEOVER);
 		verify(mockContainer).sendMakeMove(
 				AbaloneUtilities.getMoves(AbaloneUtilities.squareBoardToStringBoard(boardAfterThirdJump), 
 						Jump.listJumpToListInteger(ImmutableList.<Jump>of(firstJump, secondJump, thirdJump)),
-						wId, true));
+						wId, true, 0));
+	}
+	
+	@Test 
+	public void testGetPossiblePlacingPositions(){
+//		abalonePresenter.setBoard(AbaloneUtilities.stringBoardToSquareBoard(initialBoard));
+//		List<Position> positions = abalonePresenter.getPossibleSquaresToPlacePiece(new Position(8, 6));
+//		assertEquals(positions, ImmutableList.<Position>of(new Position(8, 6), 
+//				new Position(7, 5), new Position(7, 7)));
+//		
+//		List<Position> positions11 = abalonePresenter.getPossibleSquaresToPlacePiece(new Position(7, 11));
+//		assertEquals(positions11, ImmutableList.<Position>of(new Position(7, 11), new Position(7, 9),
+//				new Position(7, 13), new Position(8, 10), new Position(6, 10), new Position(6, 12)));
+//		
+//		
+//		abalonePresenter.setBoard(AbaloneUtilities.stringBoardToSquareBoard(specialBoard));
+//		List<Position> positions1 = abalonePresenter.getPossibleSquaresToPlacePiece(new Position(4, 10));
+//		Collections.sort(positions1);
+//		List<Position> res1 = Lists.<Position>newArrayList(
+//				new Position(4, 10),
+//				new Position(5, 9), 
+//				new Position(5, 11), 
+//				new Position(4, 8), 
+//				new Position(3, 11)
+//		);
+//		Collections.sort(res1);
+//		assertEquals(positions1, res1);
 	}
 	
 }

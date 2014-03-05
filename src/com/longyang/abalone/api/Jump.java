@@ -3,6 +3,7 @@ package com.longyang.abalone.api;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.longyang.abalone.impl.AbaloneUtilities;
 
 /**
@@ -52,6 +53,14 @@ public class Jump implements Comparable<Jump>{
 		AbaloneUtilities.check(jump != null && jump.size() == 4, 
 				"Input integer-list jump can not be null and must contain 4 coordinates!");
 		return new Jump(jump.get(0), jump.get(1), jump.get(2), jump.get(3));
+	}
+	
+	public static List<Jump> fromIntegerListListToJumpList(List<ImmutableList<Integer>> jumps){
+		List<Jump> res = Lists.newArrayList();
+		for(List<Integer> jump : jumps){
+			res.add(fromIntegerListToJump(jump));
+		}
+		return res;
 	}
 	
 	/**

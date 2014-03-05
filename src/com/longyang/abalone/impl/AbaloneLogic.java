@@ -10,6 +10,7 @@ import com.longyang.abalone.api.GameApi.Set;
 import com.longyang.abalone.api.GameApi.SetTurn;
 import com.longyang.abalone.api.GameApi.VerifyMove;
 import com.longyang.abalone.api.GameApi.VerifyMoveDone;
+import com.longyang.abalone.api.Jump;
 import com.longyang.abalone.api.Square;
 import com.longyang.abalone.api.Turn;
 
@@ -48,17 +49,20 @@ public class AbaloneLogic {
   	 * 	Jump
   	 * 	(EndGame)
   	 */
-		List<ImmutableList<ImmutableList<Integer>>> lastJump = (List<ImmutableList<ImmutableList<Integer>>>)
+		List<ImmutableList<Integer>> lastJump = (List<ImmutableList<Integer>>)
   			((Set)lastMove.get(2)).getValue();
-  	AbaloneState resultAbaloneState = abaloneState.applyJumpOnBoard(lastJump);
+  	List<ImmutableList<Square>> newBoard = AbaloneUtilities.boardAppliedJumps(
+  			abaloneState.getBoard(), Jump.fromIntegerListListToJumpList(lastJump));
   	// check whether board is the same.
   	@SuppressWarnings("unchecked")
 		List<ImmutableList<Square>> lastMoveBoard = AbaloneUtilities.stringBoardToSquareBoard(
   			(List<ImmutableList<String>>)((Set)lastMove.get(1)).getValue());
-  	AbaloneUtilities.check(resultAbaloneState.getBoard().equals(lastMoveBoard));
-  	AbaloneUtilities.check(
-  			(lastMove.size() == 3 && resultAbaloneState.getIsGameEnd() == null) ||
-  			(lastMove.size() == 4 && resultAbaloneState.getIsGameEnd().get() == true));
+  	System.out.println(newBoard.equals(lastMoveBoard));
+  	AbaloneUtilities.check(newBoard.equals(lastMoveBoard), 
+  			"board and appliedBoard is not equal");
+//  	AbaloneUtilities.check(
+//  			(lastMove.size() == 3 && resultAbaloneState.getIsGameEnd() == null) ||
+//  			(lastMove.size() == 4 && resultAbaloneState.getIsGameEnd().get() == true));
   }
 
 	public List<Operation> getInitialMove(List<Integer> playerIds) {

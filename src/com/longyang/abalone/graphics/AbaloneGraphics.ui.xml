@@ -1,0 +1,21 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+  xmlns:g="urn:import:com.google.gwt.user.client.ui">
+  <g:VerticalPanel>
+    <g:HorizontalPanel height="40px" ui:field="row0"/>
+    <g:HorizontalPanel height="40px" ui:field="row1"/>
+    <g:HorizontalPanel height="40px" ui:field="row2"/>
+    <g:HorizontalPanel height="40px" ui:field="row3"/>
+    <g:HorizontalPanel height="40px" ui:field="row4"/>
+    <g:HorizontalPanel height="40px" ui:field="row5"/>
+    <g:HorizontalPanel height="40px" ui:field="row6"/>
+    <g:HorizontalPanel height="40px" ui:field="row7"/>
+    <g:HorizontalPanel height="40px" ui:field="row8"/>
+    <g:HorizontalPanel height="40px" ui:field="row9"/>
+    <g:HorizontalPanel height="40px" ui:field="row10"/>
+    <g:HorizontalPanel height="60px">
+      <g:HorizontalPanel width="100" height="60px" ui:field="selectedArea"/>
+      <g:Button ui:field="finishRoundBtn" text="Finish jumping pieces"/>
+    </g:HorizontalPanel>
+  </g:VerticalPanel>
+</ui:UiBinder> 

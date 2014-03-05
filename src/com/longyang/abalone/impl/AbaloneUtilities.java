@@ -1,6 +1,7 @@
 package com.longyang.abalone.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -121,7 +122,11 @@ public class AbaloneUtilities {
 	 */
 	public static List<ImmutableList<Square>> boardAppliedJumps(List<ImmutableList<Square>> board, 
 			List<Jump> jumps){
+		if(jumps == null || jumps.isEmpty()){
+			return board;
+		}
 		List<ArrayList<Square>> newBoard = new ArrayList<ArrayList<Square>>();
+		Collections.sort(jumps);
 		for(List<Square> row : board){
 			ArrayList<Square> newRow = new ArrayList<Square>();
 			for(Square square : row){
@@ -134,7 +139,7 @@ public class AbaloneUtilities {
 		for(Jump jump : jumps){
 			if(board.get(jump.getOriginalX()).get(jump.getOriginalY()) == Square.W){
 				whiteHandJump.add((ImmutableList<Integer>)Jump.fromJumpToIntegerList(jump));
-			}else if(board.get(jump.getOriginalX()).get(jump.getOriginalY()) == Square.E){
+			}else if(board.get(jump.getOriginalX()).get(jump.getOriginalY()) == Square.B){
 				blackHandJump.add((ImmutableList<Integer>)Jump.fromJumpToIntegerList(jump));
 			}
 		}
@@ -174,14 +179,14 @@ public class AbaloneUtilities {
 	 * @return {@code List<Operation>} operations.
 	 */
 	public static List<Operation> getMoves(List<ImmutableList<String>> board, 
-			List<ImmutableList<Integer>> jumps, int playerId, boolean isGameOver){
+			List<ImmutableList<Integer>> jumps, int playerId, boolean isGameOver, int winnerId){
 		check(board != null && jumps != null, "Board and jumps can not be null!");
 		ImmutableList.Builder<Operation> operations = ImmutableList.<Operation>builder();
 		operations.add(new SetTurn(playerId));
 		operations.add(new Set(AbaloneConstants.BOARD, board));
 		operations.add(new Set(AbaloneConstants.JUMP, jumps));
 		if(isGameOver){
-			operations.add(new EndGame(playerId));
+			operations.add(new EndGame(winnerId));
 		}
 		return operations.build();
 	}
@@ -195,6 +200,42 @@ public class AbaloneUtilities {
 	public static void check(boolean condition, String... message){
 		if(!condition){
 			throw new RuntimeException("Hacker found: " + message);
+		}
+	}
+	
+	/**
+	 * Method use to return all false or all true matrix
+	 * @param rowNum input row number, which should be larger than 0.
+	 * @param columnNum input column number, which should be larger than 0.
+	 * @param trueOrFalse input boolean parameter, which should be true or false.
+	 * @throws IllegalArgumentException if either {@code rowNum} or {@code columnNum} is smaller or
+	 * equal to 0.
+	 * @return return a 2D matrix.
+	 */
+	public static boolean[][] getAllEnableMatrix(List<ImmutableList<Square>> board){
+		boolean[][] enableMatrix = new boolean[AbaloneConstants.boardRowNum][AbaloneConstants.boardColumnNum];
+		for(int i = 0; i < AbaloneConstants.boardRowNum; i++){
+			for(int j = 0; j < AbaloneConstants.boardColumnNum; j++){
+				if(board.get(i).get(j) == Square.B || board.get(i).get(j) == Square.W){
+					enableMatrix[i][j] = true;
+				}
+			}
+		}
+		return enableMatrix;
+	}
+	
+	public static void printOut2DArray(boolean[][] input){
+		for(boolean[] row : input){
+			for(boolean item : row){
+				System.out.print(item + " ");
+			}
+			System.out.println();
+		}
+	}
+	
+	public static void printListList(List<ImmutableList<Square>> board){
+		for(List<Square> row : board){
+			System.out.println(row);
 		}
 	}
 	

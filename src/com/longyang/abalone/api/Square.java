@@ -1,5 +1,6 @@
 package com.longyang.abalone.api;
 
+
 public enum Square {
 	W, // Square occupied by White piece.
 	B, // Square occupied by Black piece.
@@ -23,6 +24,20 @@ public enum Square {
 		return this == B;
 	}
 	
+	/**
+	 * Method used to get the opponent color for {@link W} and {@link B}
+	 * @return W if this is B, B if this is W
+	 */
+	public Square getOpponent(){
+		if(this == B) {
+			return W;
+		} else if(this == W) {
+			return B;
+		} else {
+			throw new IllegalArgumentException("Only W and B can use this method");
+		}
+	}
+	
 	@Override
 	public String toString(){
 		switch(this){
@@ -40,5 +55,4 @@ public enum Square {
 				return null;
 		}
 	}
-	
 }
