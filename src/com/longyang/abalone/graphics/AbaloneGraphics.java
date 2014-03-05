@@ -23,6 +23,12 @@ import com.longyang.abalone.api.Turn;
 import com.longyang.abalone.api.View;
 import com.longyang.abalone.impl.AbalonePresenter;
 
+/**
+ * Class used to implement {@link View}
+ *
+ * @author Long Yang (ly603@nyu.edu)
+ *
+ */
 public class AbaloneGraphics extends Composite implements View {
   public interface AbaloneGraphicsUiBinder extends UiBinder<Widget, AbaloneGraphics> {
   }
