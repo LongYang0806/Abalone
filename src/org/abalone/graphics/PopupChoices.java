@@ -1,4 +1,4 @@
-package com.longyang.abalone.graphics;
+package org.abalone.graphics;
 
 import java.util.List;
 

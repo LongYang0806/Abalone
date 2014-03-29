@@ -4,23 +4,23 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import org.abalone.api.AbaloneConstants;
+import org.abalone.api.Square;
+import org.abalone.api.Turn;
+import org.abalone.impl.AbaloneState;
+import org.abalone.impl.AbaloneUtilities;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import com.google.common.collect.ImmutableList;
-import com.longyang.abalone.api.AbaloneConstants;
-import com.longyang.abalone.api.Square;
-import com.longyang.abalone.api.Turn;
-import com.longyang.abalone.impl.AbaloneState;
-import com.longyang.abalone.impl.AbaloneUtilities;
 
 @RunWith(JUnit4.class)
 public class AbaloneStateTest {
 	/*
 	 * AbaloneState object used for testing.
 	 */
-	AbaloneState abaloneState = new AbaloneState(Turn.WP, ImmutableList.<Integer>of(), 
+	AbaloneState abaloneState = new AbaloneState(Turn.WP, ImmutableList.<String>of(), 
 			ImmutableList.<ImmutableList<Square>>of(), ImmutableList.<ImmutableList<ImmutableList<Integer>>>of(), null);
 	
 	@Test
@@ -107,9 +107,9 @@ public class AbaloneStateTest {
 						)
 				);
 		
-		AbaloneState state1 = new AbaloneState(Turn.WP, ImmutableList.of(1, 2), 
+		AbaloneState state1 = new AbaloneState(Turn.WP, ImmutableList.of("1", "2"), 
 				AbaloneUtilities.stringBoardToSquareBoard(AbaloneConstants.initialBoard), jump1, null);
-		AbaloneState state2 = new AbaloneState(Turn.WP, ImmutableList.of(1, 2), 
+		AbaloneState state2 = new AbaloneState(Turn.WP, ImmutableList.of("1", "2"), 
 				AbaloneUtilities.stringBoardToSquareBoard(AbaloneConstants.initialBoard), jump2, null);
 		
 		assertTrue(state1.equals(state2));

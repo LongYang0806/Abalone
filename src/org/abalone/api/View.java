@@ -1,10 +1,11 @@
-package com.longyang.abalone.api;
+package org.abalone.api;
 
 import java.util.List;
 
+import org.abalone.impl.AbalonePresenter;
+import org.abalone.impl.AbaloneState;
+
 import com.google.common.collect.ImmutableList;
-import com.longyang.abalone.impl.AbalonePresenter;
-import com.longyang.abalone.impl.AbaloneState;
 
 /**
  * We use MVP pattern:

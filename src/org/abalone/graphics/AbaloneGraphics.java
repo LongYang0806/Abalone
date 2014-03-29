@@ -1,6 +1,13 @@
-package com.longyang.abalone.graphics;
+package org.abalone.graphics;
 
 import java.util.List;
+
+import org.abalone.api.AbaloneMessage;
+import org.abalone.api.Jump;
+import org.abalone.api.Square;
+import org.abalone.api.Turn;
+import org.abalone.api.View;
+import org.abalone.impl.AbalonePresenter;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -16,12 +23,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
-import com.longyang.abalone.api.AbaloneMessage;
-import com.longyang.abalone.api.Jump;
-import com.longyang.abalone.api.Square;
-import com.longyang.abalone.api.Turn;
-import com.longyang.abalone.api.View;
-import com.longyang.abalone.impl.AbalonePresenter;
 
 /**
  * Class used to implement {@link View}

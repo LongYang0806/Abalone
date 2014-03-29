@@ -1,4 +1,4 @@
-package com.longyang.abalone.impl;
+package org.abalone.impl;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -7,11 +7,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import org.abalone.api.AbaloneConstants;
+import org.abalone.api.Square;
+import org.abalone.api.Turn;
+
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
-import com.longyang.abalone.api.AbaloneConstants;
-import com.longyang.abalone.api.Square;
-import com.longyang.abalone.api.Turn;
 
 /**
  * Class used to represent the state of the Abalone game state: TURN, BOARD, JUMP,
@@ -24,7 +25,7 @@ import com.longyang.abalone.api.Turn;
  */
 public class AbaloneState {
 	
-	private final ImmutableList<Integer> playerIds;
+	private final ImmutableList<String> playerIds;
 	private final Turn turn;
 	private final List<ImmutableList<Square>> board;
 	
@@ -42,7 +43,7 @@ public class AbaloneState {
 	 * @param jump The last jump made
 	 * @param isGameEnd This is a optional parameter, means whether one has won.
 	 */
-	public AbaloneState(Turn turn, ImmutableList<Integer> playerIds,
+	public AbaloneState(Turn turn, ImmutableList<String> playerIds,
 			List<ImmutableList<Square>> board, List<ImmutableList<ImmutableList<Integer>>> jump,
 			Optional<Boolean> isGameEnd){
 		this.turn = checkNotNull(turn);
@@ -310,7 +311,7 @@ public class AbaloneState {
 		return turn;
 	}
 	
-	public List<Integer> getPlayerIds(){
+	public List<String> getPlayerIds(){
 		return playerIds;
 	}
 	

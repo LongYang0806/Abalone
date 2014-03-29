@@ -1,6 +1,6 @@
-package com.longyang.abalone.api;
+package org.abalone.api;
 
-import com.longyang.abalone.impl.AbalonePresenter;
+import org.abalone.impl.AbalonePresenter;
 
 /**
  * Enum is used to present the message which can reflect the game status to player

@@ -1,10 +1,11 @@
-package com.longyang.abalone.api;
+package org.abalone.api;
 
 import java.util.List;
 
+import org.abalone.impl.AbaloneUtilities;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.longyang.abalone.impl.AbaloneUtilities;
 
 /**
  * Class used to present a jump for a player, which 

@@ -5,13 +5,13 @@ import static org.junit.Assert.assertTrue;
 import java.util.Collections;
 import java.util.List;
 
+import org.abalone.api.Jump;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import com.google.common.collect.Lists;
-import com.longyang.abalone.api.Jump;
 
 @RunWith(JUnit4.class)
 public class JumpTest {

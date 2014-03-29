@@ -1,4 +1,4 @@
-package com.longyang.abalone.api;
+package org.abalone.api;
 
 
 public enum Square {

@@ -8,6 +8,18 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import java.util.List;
 import java.util.Map;
 
+import org.abalone.api.AbaloneMessage;
+import org.abalone.api.Jump;
+import org.abalone.api.Square;
+import org.abalone.api.View;
+import org.abalone.impl.AbaloneLogic;
+import org.abalone.impl.AbalonePresenter;
+import org.abalone.impl.AbaloneUtilities;
+import org.game_api.GameApi;
+import org.game_api.GameApi.Container;
+import org.game_api.GameApi.Operation;
+import org.game_api.GameApi.SetTurn;
+import org.game_api.GameApi.UpdateUI;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,18 +29,6 @@ import org.mockito.Mockito;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.longyang.abalone.api.AbaloneMessage;
-import com.longyang.abalone.api.GameApi;
-import com.longyang.abalone.api.GameApi.Container;
-import com.longyang.abalone.api.GameApi.Operation;
-import com.longyang.abalone.api.GameApi.SetTurn;
-import com.longyang.abalone.api.GameApi.UpdateUI;
-import com.longyang.abalone.api.Jump;
-import com.longyang.abalone.api.Square;
-import com.longyang.abalone.api.View;
-import com.longyang.abalone.impl.AbaloneLogic;
-import com.longyang.abalone.impl.AbalonePresenter;
-import com.longyang.abalone.impl.AbaloneUtilities;
 
 @RunWith(JUnit4.class)
 public class AbalonePresenterTest {
@@ -45,14 +45,14 @@ public class AbalonePresenterTest {
 	private static final String E = "Empty Square";
 	private static final String S = "Score Square";
 	private static final String I = "Illegal Square";
-	private final int viewerId = GameApi.VIEWER_ID;
-	private final int wId = 1;
-	private final int bId = 2;
+	private final String viewerId = GameApi.VIEWER_ID;
+	private final String wId = "1";
+	private final String bId = "2";
 	private final ImmutableMap<String, Object> wInfo = ImmutableMap.<String, Object>of(PLAYER_ID, wId);
 	private final ImmutableMap<String, Object> bInfo = ImmutableMap.<String, Object>of(PLAYER_ID, bId);
 	private final ImmutableList<Map<String, Object>> playersInfo = 
 			ImmutableList.<Map<String, Object>>of(wInfo, bInfo);
-	private final ImmutableList<Integer> playerIds = ImmutableList.of(wId, bId);
+	private final ImmutableList<String> playerIds = ImmutableList.of(wId, bId);
 	private final ImmutableMap<String, Object> emptyState = ImmutableMap.<String, Object>of();
   
   /*
@@ -107,14 +107,14 @@ public class AbalonePresenterTest {
 	 * @return a {@link UpdateUI} object
 	 */
 	private UpdateUI createUpdateUI(
-      int yourPlayerId, int turnOfPlayerId, Map<String, Object> state) {
+      String yourPlayerId, String turnOfPlayerId, Map<String, Object> state) {
     // Our UI only looks at the current state
     // (we ignore: lastState, lastMovePlayerId, playerIdToNumberOfTokensInPot)
     return new UpdateUI(yourPlayerId, playersInfo, state,
         emptyState, // we ignore lastState
         ImmutableList.<Operation>of(new SetTurn(turnOfPlayerId)),
-        0,
-        ImmutableMap.<Integer, Integer>of());
+        "0",
+        ImmutableMap.<String, Integer>of());
   }
 	
 	@Before
@@ -139,12 +139,12 @@ public class AbalonePresenterTest {
 	
 	@Test
 	public void testEmptyStateForBP(){
-		abalonePresenter.updateUI(createUpdateUI(bId, 0, emptyState));
+		abalonePresenter.updateUI(createUpdateUI(bId, "0", emptyState));
 	}
 	
 	@Test
 	public void testEmptyStateForViewer(){
-		abalonePresenter.updateUI(createUpdateUI(viewerId, 0, emptyState));
+		abalonePresenter.updateUI(createUpdateUI(viewerId, "0", emptyState));
 	}
 	
 	@Test
@@ -233,7 +233,7 @@ public class AbalonePresenterTest {
 		abalonePresenter.finishedJumpingPieces();
 		verify(mockContainer).sendMakeMove(
 				AbaloneUtilities.getMoves(AbaloneUtilities.squareBoardToStringBoard(boardAfterFirstJump), 
-						Jump.listJumpToListInteger(ImmutableList.<Jump>of(firstJump)), bId, false, 0));
+						Jump.listJumpToListInteger(ImmutableList.<Jump>of(firstJump)), bId, false, "0"));
 	}
 	
 	@Test
@@ -266,7 +266,7 @@ public class AbalonePresenterTest {
 		abalonePresenter.finishedJumpingPieces();
 		verify(mockContainer).sendMakeMove(
 				AbaloneUtilities.getMoves(AbaloneUtilities.squareBoardToStringBoard(boardAfterSecondJump), 
-						Jump.listJumpToListInteger(ImmutableList.<Jump>of(firstJump, secondJump)), bId, false, 0));
+						Jump.listJumpToListInteger(ImmutableList.<Jump>of(firstJump, secondJump)), bId, false, "0"));
 	}
 	
 	@Test
@@ -304,7 +304,7 @@ public class AbalonePresenterTest {
 		verify(mockContainer).sendMakeMove(
 				AbaloneUtilities.getMoves(AbaloneUtilities.squareBoardToStringBoard(boardAfterThirdJump), 
 						Jump.listJumpToListInteger(ImmutableList.<Jump>of(firstJump, secondJump, thirdJump)), 
-						wId, false, 0));
+						wId, false, "0"));
 	}
 	
 	@Test
@@ -351,7 +351,7 @@ public class AbalonePresenterTest {
 		verify(mockContainer).sendMakeMove(
 				AbaloneUtilities.getMoves(AbaloneUtilities.squareBoardToStringBoard(boardAfterFourthJump), 
 						Jump.listJumpToListInteger(ImmutableList.<Jump>of(thirdJump, secondJump, 
-								firstJump, fourthJump)), bId, false, 0));
+								firstJump, fourthJump)), bId, false, "0"));
 	}
 	
 	@Test
@@ -389,7 +389,7 @@ public class AbalonePresenterTest {
 		verify(mockContainer).sendMakeMove(
 				AbaloneUtilities.getMoves(AbaloneUtilities.squareBoardToStringBoard(boardAfterThirdJump), 
 						Jump.listJumpToListInteger(ImmutableList.<Jump>of(firstJump, secondJump, thirdJump)),
-						wId, true, 0));
+						wId, true, "0"));
 	}
 	
 	@Test 

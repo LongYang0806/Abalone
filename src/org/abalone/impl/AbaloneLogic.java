@@ -1,18 +1,19 @@
-package com.longyang.abalone.impl;
+package org.abalone.impl;
 
 import java.util.List;
 import java.util.Map;
 
+import org.abalone.api.AbaloneConstants;
+import org.abalone.api.Jump;
+import org.abalone.api.Square;
+import org.abalone.api.Turn;
+import org.game_api.GameApi.Operation;
+import org.game_api.GameApi.Set;
+import org.game_api.GameApi.SetTurn;
+import org.game_api.GameApi.VerifyMove;
+import org.game_api.GameApi.VerifyMoveDone;
+
 import com.google.common.collect.ImmutableList;
-import com.longyang.abalone.api.AbaloneConstants;
-import com.longyang.abalone.api.GameApi.Operation;
-import com.longyang.abalone.api.GameApi.Set;
-import com.longyang.abalone.api.GameApi.SetTurn;
-import com.longyang.abalone.api.GameApi.VerifyMove;
-import com.longyang.abalone.api.GameApi.VerifyMoveDone;
-import com.longyang.abalone.api.Jump;
-import com.longyang.abalone.api.Square;
-import com.longyang.abalone.api.Turn;
 
 public class AbaloneLogic {
 	
@@ -37,7 +38,7 @@ public class AbaloneLogic {
     
   	Map<String, Object> lastState = verifyMove.getLastState();
   	List<Operation> lastMove = verifyMove.getLastMove();
-  	List<Integer> playerIds = verifyMove.getPlayerIds();
+  	List<String> playerIds = verifyMove.getPlayerIds();
   	Turn turn = Turn.values()[playerIds.indexOf(verifyMove.getLastMovePlayerId())];
   	AbaloneState abaloneState = 
   			AbaloneUtilities.gameApiStateToAbaloneState(lastState, turn, playerIds);
@@ -65,8 +66,8 @@ public class AbaloneLogic {
 //  			(lastMove.size() == 4 && resultAbaloneState.getIsGameEnd().get() == true));
   }
 
-	public List<Operation> getInitialMove(List<Integer> playerIds) {
-		int whitePlayerId = playerIds.get(0);
+	public List<Operation> getInitialMove(List<String> playerIds) {
+		String whitePlayerId = playerIds.get(0);
 		return ImmutableList.<Operation>of(
 				new SetTurn(whitePlayerId),
 				new Set(AbaloneConstants.BOARD, AbaloneConstants.initialBoard),

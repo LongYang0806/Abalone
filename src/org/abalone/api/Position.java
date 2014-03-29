@@ -1,4 +1,4 @@
-package com.longyang.abalone.api;
+package org.abalone.api;
 
 /**
  * Class used to represent a 2D (x, y) position.
@@ -25,11 +25,7 @@ public class Position implements Comparable<Position>{
 	
 	@Override
 	public String toString(){
-		if(this != null){
-			return "(" + x + ", " + y + ")";
-		}else {
-			return null;
-		}
+		return "(" + x + ", " + y + ")";
 	}
 	
 	@Override

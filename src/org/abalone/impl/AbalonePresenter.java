@@ -1,22 +1,23 @@
-package com.longyang.abalone.impl;
+package org.abalone.impl;
 
 import java.util.LinkedList;
 import java.util.List;
 
+import org.abalone.api.AbaloneConstants;
+import org.abalone.api.AbaloneMessage;
+import org.abalone.api.Jump;
+import org.abalone.api.Position;
+import org.abalone.api.Square;
+import org.abalone.api.Turn;
+import org.abalone.api.View;
+import org.game_api.GameApi.Container;
+import org.game_api.GameApi.Operation;
+import org.game_api.GameApi.SetTurn;
+import org.game_api.GameApi.UpdateUI;
+
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.longyang.abalone.api.AbaloneConstants;
-import com.longyang.abalone.api.AbaloneMessage;
-import com.longyang.abalone.api.GameApi.Container;
-import com.longyang.abalone.api.GameApi.Operation;
-import com.longyang.abalone.api.GameApi.SetTurn;
-import com.longyang.abalone.api.GameApi.UpdateUI;
-import com.longyang.abalone.api.Jump;
-import com.longyang.abalone.api.Position;
-import com.longyang.abalone.api.Square;
-import com.longyang.abalone.api.Turn;
-import com.longyang.abalone.api.View;
 
 /**
  * We use MVP Pattern:
@@ -67,7 +68,7 @@ public class AbalonePresenter {
 	 * @param updateUI input updateUI to pass necessary information.
 	 */
 	public void updateUI(UpdateUI updateUI){
-		List<Integer> playerIds = updateUI.getPlayerIds();
+		List<String> playerIds = updateUI.getPlayerIds();
 		int yourPlayerIndex = updateUI.getYourPlayerIndex();
 		myTurn = 
 				yourPlayerIndex == 0 ? Optional.<Turn>of(Turn.WP) : 

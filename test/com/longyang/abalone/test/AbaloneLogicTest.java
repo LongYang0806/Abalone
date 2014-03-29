@@ -6,19 +6,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.abalone.impl.AbaloneLogic;
+import org.game_api.GameApi.EndGame;
+import org.game_api.GameApi.Operation;
+import org.game_api.GameApi.Set;
+import org.game_api.GameApi.SetTurn;
+import org.game_api.GameApi.VerifyMove;
+import org.game_api.GameApi.VerifyMoveDone;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.longyang.abalone.api.GameApi.EndGame;
-import com.longyang.abalone.api.GameApi.Operation;
-import com.longyang.abalone.api.GameApi.Set;
-import com.longyang.abalone.api.GameApi.SetTurn;
-import com.longyang.abalone.api.GameApi.VerifyMove;
-import com.longyang.abalone.api.GameApi.VerifyMoveDone;
-import com.longyang.abalone.impl.AbaloneLogic;
 
 /**
  * Unit test class used to test Abalone Game.
@@ -39,8 +39,8 @@ public class AbaloneLogicTest {
 	private static final String E = "Empty Square";
 	private static final String S = "Score Square";
 	private static final String I = "Illegal Square";
-	private final int wId = 1;
-	private final int bId = 2;
+	private final String wId = "1";
+	private final String bId = "2";
 	private final ImmutableMap<String, Object> wInfo = ImmutableMap.<String, Object>of(PLAYER_ID, wId);
 	private final ImmutableMap<String, Object> bInfo = ImmutableMap.<String, Object>of(PLAYER_ID, bId);
 	private final ImmutableList<Map<String, Object>> playersInfo = 
@@ -190,16 +190,16 @@ public class AbaloneLogicTest {
 	}
 	
 	private VerifyMove move(
-      int lastMovePlayerId, Map<String, Object> lastState, List<Operation> lastMove) {
+      String lastMovePlayerId, Map<String, Object> lastState, List<Operation> lastMove) {
     return new VerifyMove(playersInfo,
         // in cheat we never need to check the resulting state (the server makes it, and the game
         // doesn't have any hidden decisions such in Battleships)
         emptyState,
-        lastState, lastMove, lastMovePlayerId, ImmutableMap.<Integer, Integer>of());
+        lastState, lastMove, lastMovePlayerId, ImmutableMap.<String, Integer>of());
   }
 	
 	private List<Operation> getInitialOperations() {
-    return abaloneLogic.getInitialMove(ImmutableList.<Integer>of(wId, bId));
+    return abaloneLogic.getInitialMove(ImmutableList.<String>of(wId, bId));
   }
 	
 	@Test

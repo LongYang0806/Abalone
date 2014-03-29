@@ -1,23 +1,23 @@
 package com.longyang.abalone.test;
 
-import static com.longyang.abalone.api.Square.B;
-import static com.longyang.abalone.api.Square.E;
-import static com.longyang.abalone.api.Square.I;
-import static com.longyang.abalone.api.Square.S;
-import static com.longyang.abalone.api.Square.W;
+import static org.abalone.api.Square.B;
+import static org.abalone.api.Square.E;
+import static org.abalone.api.Square.I;
+import static org.abalone.api.Square.S;
+import static org.abalone.api.Square.W;
 import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
+import org.abalone.api.AbaloneConstants;
+import org.abalone.api.Jump;
+import org.abalone.api.Square;
+import org.abalone.impl.AbaloneUtilities;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import com.google.common.collect.ImmutableList;
-import com.longyang.abalone.api.AbaloneConstants;
-import com.longyang.abalone.api.Jump;
-import com.longyang.abalone.api.Square;
-import com.longyang.abalone.impl.AbaloneUtilities;
 
 @RunWith(JUnit4.class)
 public class AbaloneUtilitiesTest {

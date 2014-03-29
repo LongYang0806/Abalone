@@ -1,4 +1,4 @@
-package com.longyang.abalone.graphics;
+package org.abalone.graphics;
 
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;
