@@ -24,4 +24,17 @@ public interface AbaloneImages extends ClientBundle {
 	
 	@Source("images/ILLEGAL_BOARD.gif")
 	ImageResource illegal_board();
+	
+	@Source("images/RED_PIECE.png")
+	ImageResource red_piece();
+	
+	@Source("images/RED_PIECE_HIGHLIGHT.png")
+	ImageResource red_piece_highlight();
+	
+	@Source("images/WHITE_PIECE.png")
+	ImageResource white_piece();
+	
+	@Source("images/WHITE_PIECE_HIGHLIGHT.png")
+	ImageResource white_piece_highlight();
+	
 }
