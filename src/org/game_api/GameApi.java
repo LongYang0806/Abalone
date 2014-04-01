@@ -33,22 +33,12 @@ public final class GameApi {
   /** playerId for a user viewing a match; a viewer can't make any moves in the game. */
   public static final String VIEWER_ID = "-1";
 
-  /*
-   * Self understanding for this interface:
-   * 
-   * This is the interface which should be implemented by certain "Container", and
-   * Game can invoke in the future, to communicate with the server.
-   */
   public interface Container {
     void sendGameReady();
     void sendVerifyMoveDone(VerifyMoveDone verifyMoveDone);
     void sendMakeMove(List<Operation> operations);
   }
 
-  /*
-   * Game should be implemented with the following methods,
-   * and then can be invoked by container.
-   */
   public interface Game {
     void sendVerifyMove(VerifyMove verifyMove);
     void sendUpdateUI(UpdateUI updateUI);
@@ -80,6 +70,9 @@ public final class GameApi {
       postMessageToParent(GameApiJsonHelper.getJsonString(makeMove));
     }
 
+    /* This method is used to post message from iFrame which is the container
+     * to the game.
+     */
     public static native void postMessageToParent(String message) /*-{
       $wnd.parent.postMessage(JSON.parse(message), "*");
     }-*/;

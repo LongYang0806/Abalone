@@ -1,15 +1,18 @@
 package org.abalone.graphics;
 
+import static org.abalone.client.AbaloneConstants.B;
+import static org.abalone.client.AbaloneConstants.E;
+import static org.abalone.client.AbaloneConstants.GAMEOVER;
+import static org.abalone.client.AbaloneConstants.I;
+import static org.abalone.client.AbaloneConstants.S;
+import static org.abalone.client.AbaloneConstants.W;
+
+import java.util.ArrayList;
 import java.util.List;
 
-import org.abalone.api.AbaloneMessage;
-import org.abalone.api.Jump;
-import org.abalone.api.Square;
-import org.abalone.api.Turn;
-import org.abalone.api.View;
-import org.abalone.impl.AbalonePresenter;
+import org.abalone.client.AbalonePresenter;
+import org.abalone.client.AbalonePresenter.View;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -61,11 +64,11 @@ public class AbaloneGraphics extends Composite implements View {
   @UiField
   HorizontalPanel row10;
   @UiField
-  HorizontalPanel selectedArea;
-  @UiField
   Button finishRoundBtn;
+  
   private AbaloneImages abaloneImages;
   private AbalonePresenter abalonePresenter;
+  private boolean isGameOver = false;
   /**
    * Constructor used to create an AbaloneGraphics object,
    * and this also create {@code abaloneImages}
@@ -96,7 +99,7 @@ public class AbaloneGraphics extends Composite implements View {
   @UiHandler("finishRoundBtn")
   void onClickClaimBtn(ClickEvent e) {
     finishRoundBtn.setEnabled(false);
-    abalonePresenter.finishedJumpingPieces();
+    abalonePresenter.finishAllPlacing(isGameOver);
   }
   
 	@Override
@@ -105,20 +108,13 @@ public class AbaloneGraphics extends Composite implements View {
 	}
 
 	@Override
-	public void setPlayerState(List<ImmutableList<Square>> board, boolean[][] enableMatrix,
-			AbaloneMessage message) {
+	public void setPlayerState(List<ArrayList<String>> board, boolean[][] enableMatrix, 
+			String message){
 		fillBoard(board, enableMatrix, ActionType.HOLD);
 		finishRoundBtn.setEnabled(false);
-		if(message == AbaloneMessage.GAMEOVER){
+		if(message.equals(GAMEOVER)){
 			//TODO should throw out box to say whose is the winner.
 		}
-	}
-
-	@Override
-	public void nextPieceJump(List<ImmutableList<Square>> board,
-			List<Jump> previousJumps, AbaloneMessage message) {
-		// aborted method.
-//		fillBoard(board, AbaloneUtilities.getAllEnableMatrix(board.size(), board.get(0).size(), true));
 	}
 	
 	/**
@@ -126,7 +122,7 @@ public class AbaloneGraphics extends Composite implements View {
 	 * @param board the input board.
 	 * @param enableMatrix 2D boolean matrix to indicate which slots can be click-enabled.
 	 */
-	private void fillBoard(List<ImmutableList<Square>> board, boolean[][] enableMatrix, 
+	private void fillBoard(List<ArrayList<String>> board, boolean[][] enableMatrix, 
 			ActionType actionType) {
 		if(board == null || board.isEmpty()){
 			throw new IllegalArgumentException("Input board should not null or empty!");
@@ -180,9 +176,9 @@ public class AbaloneGraphics extends Composite implements View {
 	 * @param rowNum indicates which row this is.
 	 * @return {@code List<Image>}
 	 */
-	private List<Image> squaresToImages(List<Square> squares, boolean[] enableRow, 
+	private List<Image> squaresToImages(List<String> squares, boolean[] enableRow, 
 			int rowNum, ActionType actionType){
-		ImmutableList.Builder<Image> images = ImmutableList.<Image>builder();
+		List<Image> images = Lists.<Image>newArrayList();
 		Image image = null;
 		for(int i = 0; i < squares.size(); i++){
 			switch(squares.get(i)){
@@ -220,54 +216,99 @@ public class AbaloneGraphics extends Composite implements View {
 				image.addClickHandler(new ClickHandler() {
 					@Override
 					public void onClick(ClickEvent event) {
+						System.out.println("Hold a piece");
 						if(type == ActionType.HOLD){
-							abalonePresenter.pieceHeld(row, column);
+							abalonePresenter.heldOnePiece(row, column);
+							System.out.println("hold: [" + row + ", " + column + "]");
 						}else if(type == ActionType.PLACE){
-							abalonePresenter.piecePlaced(row, column);
+							abalonePresenter.placedOnePiece(row, column);
+							System.out.println("place: [" + row + ", " + column + "]");
 						}
           } 
 				});
 			}
 			images.add(image);
 		}
-		return images.build();
+		return images;
 	}
 
 	@Override
-	public void toPlacePiece(List<ImmutableList<Square>> board,
-			boolean[][] enableMatrix, boolean btnEnable, Turn turn, AbaloneMessage message) {
-		fillBoard(board, enableMatrix, ActionType.PLACE);
-		finishRoundBtn.setEnabled(btnEnable);
-		String winnerMessage = "Game Over and the winner is: " + turn.toString();
-		if(message == AbaloneMessage.GAMEOVER){
+	public void toHoldOnePiece(List<ArrayList<String>> board, boolean[][] holdableMatrix, 
+			boolean enableFinishButton, String turn, String message) {
+		System.out.println("Board");
+		for(int i = 0; i < board.size(); i++){
+			for(int j = 0; j < board.get(i).size(); j++) {
+				System.out.print(board.get(i).get(j) + " ");
+			}
+			System.out.println();
+		}
+		System.out.println("holdableMatrix");
+		for(int i = 0; i < holdableMatrix.length; i++){
+			for(int j = 0; j < holdableMatrix[i].length; j++) {
+				if(holdableMatrix[i][j]){
+					System.out.print("1 ");
+				} else {
+					System.out.print("0 ");
+				}
+			}
+			System.out.println();
+		}
+		fillBoard(board, holdableMatrix, ActionType.HOLD);
+		finishRoundBtn.setEnabled(enableFinishButton);
+		String winnerMessage = "Game Over and the winner is: " + turn;
+		if(message.equals(GAMEOVER)) {
+			isGameOver = true;
 			List<String> options = Lists.newArrayList("OK");
+			abalonePresenter.finishAllPlacing(isGameOver);
 			new PopupChoices(winnerMessage, options,
-	        new PopupChoices.OptionChosen() {
-	      @Override
-	      public void optionChosen(String option) {
-	        if (option.equals("OK")) {
-	        }
-	      }
-	    }).center();
+					new PopupChoices.OptionChosen() {
+				@Override
+				public void optionChosen(String option) {
+					if (option.equals("OK")) {
+					}
+				}
+			}).center();
 		}
 	}
 
 	@Override
-	public void toHoldPiece(List<ImmutableList<Square>> board,
-			boolean[][] enableSuqare, boolean btnEnable, Turn turn, AbaloneMessage message) {
-		fillBoard(board, enableSuqare, ActionType.HOLD);
-		finishRoundBtn.setEnabled(btnEnable);
-		String winnerMessage = "Game Over and the winner is: " + turn.toString();
-		if(message == AbaloneMessage.GAMEOVER){
+	public void toPlaceOnePiece(List<ArrayList<String>> board, boolean[][] placableMatrix, 
+			boolean enableFinishButton, String turn, String message) {
+		System.out.println("Board");
+		for(int i = 0; i < board.size(); i++){
+			for(int j = 0; j < board.get(i).size(); j++) {
+				System.out.print(board.get(i).get(j) + " ");
+			}
+			System.out.println();
+		}
+		System.out.println("placableMatrix");
+		for(int i = 0; i < placableMatrix.length; i++){
+			for(int j = 0; j < placableMatrix[i].length; j++) {
+				if(placableMatrix[i][j]){
+					System.out.print("1 ");
+				} else {
+					System.out.print("0 ");
+				}
+			}
+			System.out.println();
+		}
+		
+		fillBoard(board, placableMatrix, ActionType.PLACE);
+		finishRoundBtn.setEnabled(enableFinishButton);
+		String winnerMessage = "Game Over and the winner is: " + turn;
+		if(message.equals(GAMEOVER)){ 
+			isGameOver = true;
 			List<String> options = Lists.newArrayList("OK");
+			abalonePresenter.finishAllPlacing(isGameOver);
 			new PopupChoices(winnerMessage, options,
-	        new PopupChoices.OptionChosen() {
-	      @Override
-	      public void optionChosen(String option) {
-	        if (option.equals("OK")) {
-	        }
-	      }
-	    }).center();
+					new PopupChoices.OptionChosen() {
+				@Override
+				public void optionChosen(String option) {
+					if (option.equals("OK")) {
+					}
+				}
+			}).center();
 		}
 	}
+	
 }

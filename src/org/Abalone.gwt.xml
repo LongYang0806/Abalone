@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module rename-to='abalone_game'>
-  
   <!-- Inherit the core Web Toolkit stuff.                        -->
+  <inherits name='com.google.gwt.json.JSON'/>
   <inherits name='com.google.gwt.user.User'/>
   <inherits name='com.google.common.collect.Collect'/>
-  <inherits name='com.google.gwt.json.JSON'/>
-  
+  <inherits name='com.allen_sauer.gwt.dnd.gwt-dnd'/>
   <!-- Inherit the default GWT style sheet.  You can change       -->
   <!-- the theme of your GWT application by uncommenting          -->
   <!-- any one of the following lines.                            -->
@@ -13,10 +12,11 @@
   <!-- <inherits name='com.google.gwt.user.theme.standard.Standard'/> -->
   <!-- <inherits name='com.google.gwt.user.theme.chrome.Chrome'/> -->
   <!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/>     -->
-  <add-linker name='xsiframe' />
 
   <!-- PlayN related module inherits   tripleplay.TriplePlay      -->
 
+  <add-linker name='xsiframe' />
+  
   <!-- Specify the app entry point class.                         -->
   <entry-point class='org.abalone.graphics.AbaloneEntryPoint'/>
 

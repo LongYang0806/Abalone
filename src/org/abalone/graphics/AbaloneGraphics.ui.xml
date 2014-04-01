@@ -14,7 +14,6 @@
     <g:HorizontalPanel height="40px" ui:field="row9"/>
     <g:HorizontalPanel height="40px" ui:field="row10"/>
     <g:HorizontalPanel height="60px">
-      <g:HorizontalPanel width="100" height="60px" ui:field="selectedArea"/>
       <g:Button ui:field="finishRoundBtn" text="Finish jumping pieces"/>
     </g:HorizontalPanel>
   </g:VerticalPanel>
