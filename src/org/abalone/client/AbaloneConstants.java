@@ -40,6 +40,12 @@ public class AbaloneConstants {
 	public static final String BOARD = "Board";
 	public static final String JUMP = "Jump";
 	
+	/*
+	 *	Pictures configuration information
+	 */
+  public static int picWidth = 40;
+  public static int picHight = 40;
+	
 	/* 
 	 * Initial board for initial operations.
 	 */

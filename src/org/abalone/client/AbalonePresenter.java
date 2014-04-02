@@ -185,6 +185,7 @@ public class AbalonePresenter {
 		if(x < 0 || y < 0 || x > BoardRowNum || y > BoardColNum) {
 			throw new RuntimeException("index for held piece should be valid!");
 		}
+		System.out.println("Held one Piece : " + "(" + x + ", " + y + ")");
 		
 		heldX = x;
 		heldY = y;
@@ -200,6 +201,7 @@ public class AbalonePresenter {
 		if(x < 0 || y < 0 || x > BoardRowNum || y > BoardColNum) {
 			throw new RuntimeException("index for held piece should be valid!");
 		}
+		System.out.println("Place one Piece : " + "(" + x + ", " + y + ")");
 		// currentBoard is the board which before this jump, apply all the previous jumps.
 		jumpsCopies = Lists.<ArrayList<Integer>>newArrayList(jumps);
 		Collections.sort(jumpsCopies, jumpComparator);

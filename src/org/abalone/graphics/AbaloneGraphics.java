@@ -6,6 +6,8 @@ import static org.abalone.client.AbaloneConstants.BoardRowNum;
 import static org.abalone.client.AbaloneConstants.E;
 import static org.abalone.client.AbaloneConstants.GAMEOVER;
 import static org.abalone.client.AbaloneConstants.W;
+import static org.abalone.client.AbaloneConstants.picWidth;
+import static org.abalone.client.AbaloneConstants.picHight;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,14 +54,14 @@ public class AbaloneGraphics extends Composite implements View {
   private AbsolutePanel innerBoard;
   private String innerBoardWidth = "760px";
   private String innerBoardHeight = "440px";
-  private int picWidth = 40;
-  private int picHight = 40;
   private boolean isGameOver = false;
   private boolean isPieceTurn = true;
   private Image[][] squareImages = new Image[BoardRowNum][BoardColNum];
   private Image[][] pieceImages = new Image[BoardRowNum][BoardColNum];
   private Audio pieceDown;
   private PieceMovingAnimation animation;
+  private AbaloneDragController abaloneDragController;
+  private AbaloneDropController abaloneDropController;
   
   /**
    * Constructor used to create an AbaloneGraphics object,
@@ -92,6 +94,11 @@ public class AbaloneGraphics extends Composite implements View {
 	@Override
 	public void setPresenter(AbalonePresenter abalonePresenter) {
 		this.abalonePresenter = abalonePresenter;
+		
+		abaloneDragController = new AbaloneDragController(innerBoard, false, abalonePresenter);
+    abaloneDragController.setBehaviorConstrainedToBoundaryPanel(true);
+    abaloneDragController.setBehaviorMultipleSelection(false);
+    abaloneDragController.setBehaviorDragStartSensitivity(1);
 	}
 
 	@Override
@@ -162,6 +169,8 @@ public class AbaloneGraphics extends Composite implements View {
 				final int row = i;
 				final int col = j;
 				Image image = getImageBySquare(board.get(i).get(j), enableMatrix[i][j], i, j);
+				abaloneDropController = new AbaloneDropController(image, abalonePresenter);
+				abaloneDragController.registerDropController(abaloneDropController);
 				image.addClickHandler(new ClickHandler() {
 					@Override
 					public void onClick(ClickEvent event) {
@@ -215,6 +224,7 @@ public class AbaloneGraphics extends Composite implements View {
 				if(isAPiece) {
 					// only when you have the turn, the piece is enabled onClick();
 					if(enableMatrix[i][j]) {
+						abaloneDragController.makeDraggable(image);
 						image.addClickHandler(new ClickHandler() {
 							@Override
 							public void onClick(ClickEvent event) {
