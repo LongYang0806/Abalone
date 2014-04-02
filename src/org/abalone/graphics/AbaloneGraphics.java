@@ -1,9 +1,9 @@
 package org.abalone.graphics;
 
 import static org.abalone.client.AbaloneConstants.B;
-import static org.abalone.client.AbaloneConstants.E;
 import static org.abalone.client.AbaloneConstants.BoardColNum;
 import static org.abalone.client.AbaloneConstants.BoardRowNum;
+import static org.abalone.client.AbaloneConstants.E;
 import static org.abalone.client.AbaloneConstants.GAMEOVER;
 import static org.abalone.client.AbaloneConstants.W;
 
@@ -12,11 +12,15 @@ import java.util.List;
 
 import org.abalone.client.AbalonePresenter;
 import org.abalone.client.AbalonePresenter.View;
+import org.abalone.sounds.GameSounds;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.core.shared.GWT;
+import com.google.gwt.dom.client.AudioElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.media.client.Audio;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -26,7 +30,6 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
-
 
 /**
  * Class used to implement {@link View}
@@ -43,6 +46,7 @@ public class AbaloneGraphics extends Composite implements View {
   @UiField
   Button finishRoundBtn;
   
+  private GameSounds gameSounds;
   private AbaloneImages abaloneImages;
   private AbalonePresenter abalonePresenter;
   private AbsolutePanel innerBoard;
@@ -52,17 +56,31 @@ public class AbaloneGraphics extends Composite implements View {
   private int picHight = 40;
   private boolean isGameOver = false;
   private boolean isPieceTurn = true;
+  private Image[][] squareImages = new Image[BoardRowNum][BoardColNum];
+  private Image[][] pieceImages = new Image[BoardRowNum][BoardColNum];
+  private Audio pieceDown;
+  private PieceMovingAnimation animation;
+  
   /**
    * Constructor used to create an AbaloneGraphics object,
    * and this also create {@code abaloneImages}
    * and {#link AbaloneGraphicsUiBinder} and initialize it.
    */
   public AbaloneGraphics(){
+  	gameSounds = GWT.create(GameSounds.class);
   	abaloneImages = GWT.create(AbaloneImages.class);
   	AbaloneGraphicsUiBinder uiBinder = GWT.create(AbaloneGraphicsUiBinder.class);
   	innerBoard = new AbsolutePanel();
   	innerBoard.setSize(innerBoardWidth, innerBoardHeight);
     initWidget(uiBinder.createAndBindUi(this));
+    
+    if (Audio.isSupported()) {
+      pieceDown = Audio.createIfSupported();
+      pieceDown.addSource(gameSounds.pieceDownMp3().getSafeUri()
+                      .asString(), AudioElement.TYPE_MP3);
+      pieceDown.addSource(gameSounds.pieceDownWav().getSafeUri()
+                      .asString(), AudioElement.TYPE_WAV);
+    }
   }
   
   @UiHandler("finishRoundBtn")
@@ -113,7 +131,7 @@ public class AbaloneGraphics extends Composite implements View {
 	public void toPlaceOnePiece(List<ArrayList<String>> board, boolean[][] placableMatrix, 
 			boolean enableFinishButton, String turn, String message) {
 		placeBoardWithSquare(board, placableMatrix);
-		placeBoardWithPieces(board, new boolean[BoardRowNum][BoardColNum]);
+		placeBoardWithPieces(board, placableMatrix);
 		finishRoundBtn.setEnabled(enableFinishButton);
 		String winnerMessage = "Game Over and the winner is: " + turn;
 		if(message.equals(GAMEOVER)){ 
@@ -143,7 +161,7 @@ public class AbaloneGraphics extends Composite implements View {
 			for(int j = 0; j < BoardColNum; j++) {
 				final int row = i;
 				final int col = j;
-				Image image = getImageBySquare(board.get(i).get(j), enableMatrix[i][j]);
+				Image image = getImageBySquare(board.get(i).get(j), enableMatrix[i][j], i, j);
 				image.addClickHandler(new ClickHandler() {
 					@Override
 					public void onClick(ClickEvent event) {
@@ -153,6 +171,7 @@ public class AbaloneGraphics extends Composite implements View {
 				});
 				image.setStyleName("imgSquare");
 				innerBoard.add(image, j * picHight, i * picWidth);
+				squareImages[i][j] = image;
 			}
 		}
 		outerBoard.add(innerBoard);
@@ -172,50 +191,79 @@ public class AbaloneGraphics extends Composite implements View {
 				final int row = i;
 				final int col = j;
 				Image image = new Image();
+				ImageResource imageRes = abaloneImages.illegal_board();
+				
 				if(board.get(i).get(j).equals(W)) {
 					isAPiece = true;
 					if(enableMatrix[i][j]) {
-						image = new Image(abaloneImages.white_piece_highlight());
+						imageRes = abaloneImages.white_piece_highlight();
+						image = new Image(imageRes);
 					} else {
-						image = new Image(abaloneImages.white_piece());
+						imageRes = abaloneImages.white_piece();
+						image = new Image(imageRes);
 					}
 				} else if(board.get(i).get(j).equals(B)) {
 					isAPiece = true;
 					if(enableMatrix[i][j]) {
-						image = new Image(abaloneImages.red_piece_highlight());
+						imageRes = abaloneImages.red_piece_highlight();
+						image = new Image(imageRes);
 					} else {
-						image = new Image(abaloneImages.red_piece());
+						imageRes = abaloneImages.red_piece();
+						image = new Image(imageRes);
 					}
 				}
 				if(isAPiece) {
-					image.addClickHandler(new ClickHandler() {
-						@Override
-						public void onClick(ClickEvent event) {
-							if(isPieceTurn){
-								abalonePresenter.heldOnePiece(row, col);
-							} else {
-								abalonePresenter.placedOnePiece(row, col);
-							}
-							isPieceTurn = !isPieceTurn;
-	          } 
-					});
+					// only when you have the turn, the piece is enabled onClick();
+					if(enableMatrix[i][j]) {
+						image.addClickHandler(new ClickHandler() {
+							@Override
+							public void onClick(ClickEvent event) {
+								if(isPieceTurn){
+									abalonePresenter.heldOnePiece(row, col);
+								} else {
+									abalonePresenter.placedOnePiece(row, col);
+								}
+								isPieceTurn = !isPieceTurn;
+		          } 
+						});
+					}
 					image.setStyleName("imgSquare");
 					innerBoard.add(image, j * picHight, i * picWidth);
+					pieceImages[i][j] = image;
 				}
 			}
 		}
 		outerBoard.add(innerBoard);
 	}
 	
-	private Image getImageBySquare(String square, boolean dropable) {
+	private Image getImageBySquare(String square, boolean dropable, int x, int y) {
+		ImageResource imageRes;
 		if (dropable) {
-			return new Image(abaloneImages.board_highlight());
+			imageRes = abaloneImages.board_highlight();
 		}else if(square.equals(W) || square.equals(B) || square.equals(E)) {
-			return new Image(abaloneImages.empty_board());
+			imageRes = abaloneImages.empty_board();
 		} else {
-			return new Image(abaloneImages.illegal_board());
+			imageRes = abaloneImages.illegal_board();
 		}
+		return new Image(imageRes);
 	}
 	
+	@Override
+	public void animateMove(int startX, int startY, int endX, int endY, int color) {
+		Image startImage = pieceImages[startX][startY];
+		Image endImage = squareImages[endX][endY];
+		ImageResource startRes;
+		ImageResource endRes;
+		ImageResource blankRes = abaloneImages.red_piece();
+		if(color == 0) {
+			startRes = abaloneImages.white_piece();
+		} else {
+			startRes = abaloneImages.red_piece();
+		}
+		endRes = abaloneImages.empty_board();
+		animation = new PieceMovingAnimation(startImage, endImage, startRes, 
+				endRes, blankRes, pieceDown);
+		animation.run(1000);
+	}
 	
 }

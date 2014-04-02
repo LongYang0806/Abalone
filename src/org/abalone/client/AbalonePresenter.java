@@ -90,6 +90,8 @@ public class AbalonePresenter {
 		 */
 		public void toPlaceOnePiece(List<ArrayList<String>> board, boolean[][] placableMatrix,
 				boolean enableFinishButton, String turn, String message);
+		
+		public void animateMove(int startX, int startY, int endX, int endY, int color);
 	}
 		
 	public enum Direction{
@@ -111,6 +113,7 @@ public class AbalonePresenter {
 	private Optional<String> myTurn;
 	private String currentTurn; 							// currentTurn must not be null, explanation down.
 	private List<ArrayList<Integer>> jumps;		// used to store all the jumps in current round.
+	private List<ArrayList<Integer>> jumpsCopies;
 	private AbaloneState abaloneState;
 	private int[] lastJump = new int[5]; 			// {startX, startY, endX, endY, pieceColor{0/1}}
 	private List<ArrayList<String>> currentBoard;
@@ -186,8 +189,9 @@ public class AbalonePresenter {
 		heldX = x;
 		heldY = y;
 		boolean[][] placableMatrix = getPlacableMatrix(x, y);
-		Collections.sort(jumps, jumpComparator);
-		List<ArrayList<String>> boardAfterJumps = abaloneState.applyJumpOnBoard(jumps).getBoard();
+		jumpsCopies = Lists.<ArrayList<Integer>>newArrayList(jumps);
+		Collections.sort(jumpsCopies, jumpComparator);
+		List<ArrayList<String>> boardAfterJumps = abaloneState.applyJumpOnBoard(jumpsCopies).getBoard();
 		view.toPlaceOnePiece(boardAfterJumps, placableMatrix, !jumps.isEmpty(), 
 				abaloneState.getTurn(), UNDERGOING);
 	}
@@ -197,14 +201,19 @@ public class AbalonePresenter {
 			throw new RuntimeException("index for held piece should be valid!");
 		}
 		// currentBoard is the board which before this jump, apply all the previous jumps.
-		Collections.sort(jumps, jumpComparator);
-		currentBoard = abaloneState.applyJumpOnBoard(jumps).getBoard();
+		jumpsCopies = Lists.<ArrayList<Integer>>newArrayList(jumps);
+		Collections.sort(jumpsCopies, jumpComparator);
+		currentBoard = abaloneState.applyJumpOnBoard(jumpsCopies).getBoard();
 		int piece = abaloneState.getTurn().equals(WTurn) ? 0 : 1;
 		List<ArrayList<String>> appliedJumpsBoard;
 		boolean[][] holdableMatrix = new boolean[BoardRowNum][BoardColNum];
 		if(heldX == x && heldY == y) {
 			// cancel previous holding piece operation
 			holdableMatrix = getEnableSquares(abaloneState.getBoard(), abaloneState.getTurn());
+			for(List<Integer> jump : jumps) {
+				view.animateMove(jump.get(0), jump.get(1), jump.get(2), 
+						jump.get(3), jump.get(4));
+			}
 			view.toHoldOnePiece(currentBoard, holdableMatrix, 
 					!jumps.isEmpty(), abaloneState.getTurn(), UNDERGOING);
 		} else {
@@ -222,11 +231,15 @@ public class AbalonePresenter {
 					}
 				}
 				holdableMatrix = getEnableSquares(abaloneState.getBoard(), abaloneState.getTurn());
-				Collections.sort(jumps, jumpComparator);
-				appliedJumpsBoard = abaloneState.applyJumpOnBoard(jumps).getBoard();
+				jumpsCopies = Lists.<ArrayList<Integer>>newArrayList(jumps);
+				Collections.sort(jumpsCopies, jumpComparator);
+				appliedJumpsBoard = abaloneState.applyJumpOnBoard(jumpsCopies).getBoard();
+				for(List<Integer> jump : jumps) {
+					view.animateMove(jump.get(0), jump.get(1), jump.get(2), 
+							jump.get(3), jump.get(4));
+				}
 				view.toHoldOnePiece(appliedJumpsBoard, holdableMatrix, 
 						!jumps.isEmpty(), abaloneState.getTurn(), UNDERGOING);
-				
 			} else {
 				ArrayList<Integer> thisJump = Lists.newArrayList(heldX, heldY, x, y, piece);
 				lastJump = new int[5];
@@ -237,8 +250,13 @@ public class AbalonePresenter {
 					// add the jump into the jumps directly.
 					jumps.add(thisJump);
 					holdableMatrix = getEnableSquares(abaloneState.getBoard(), abaloneState.getTurn());
-					Collections.sort(jumps, jumpComparator);
-					appliedJumpsBoard = abaloneState.applyJumpOnBoard(jumps).getBoard();
+					jumpsCopies = Lists.<ArrayList<Integer>>newArrayList(jumps);
+					Collections.sort(jumpsCopies, jumpComparator);
+					appliedJumpsBoard = abaloneState.applyJumpOnBoard(jumpsCopies).getBoard();
+					for(List<Integer> jump : jumps) {
+						view.animateMove(jump.get(0), jump.get(1), jump.get(2), 
+								jump.get(3), jump.get(4));
+					}
 					view.toHoldOnePiece(appliedJumpsBoard, holdableMatrix, 
 							!jumps.isEmpty(), abaloneState.getTurn(), UNDERGOING);
 				} else {
@@ -248,8 +266,13 @@ public class AbalonePresenter {
 					 */
 					abaloneMessage = generateAllJumps(x, y, piece);
 					holdableMatrix = getEnableSquares(abaloneState.getBoard(), abaloneState.getTurn());
-					Collections.sort(jumps, jumpComparator);
-					appliedJumpsBoard = abaloneState.applyJumpOnBoard(jumps).getBoard();
+					jumpsCopies = Lists.<ArrayList<Integer>>newArrayList(jumps);
+					Collections.sort(jumpsCopies, jumpComparator);
+					appliedJumpsBoard = abaloneState.applyJumpOnBoard(jumpsCopies).getBoard();
+					for(List<Integer> jump : jumps) {
+						view.animateMove(jump.get(0), jump.get(1), jump.get(2), 
+								jump.get(3), jump.get(4));
+					}
 					view.toHoldOnePiece(appliedJumpsBoard, holdableMatrix, 
 							!jumps.isEmpty(), abaloneState.getTurn(), abaloneMessage);
 				}
@@ -258,19 +281,39 @@ public class AbalonePresenter {
 	}
 	
 	public void finishAllPlacing(boolean isGameOver) {
-		Collections.sort(jumps, jumpComparator);
-		currentBoard = abaloneState.applyJumpOnBoard(jumps).getBoard();
+		System.out.println("Jump");
+		System.out.println(AbaloneState.listListIntegerToString(jumps));
+		
+		jumpsCopies = Lists.<ArrayList<Integer>>newArrayList(jumps);
+		
+		System.out.println("Jump copy");
+		System.out.println(AbaloneState.listListIntegerToString(jumpsCopies));
+		
+		Collections.sort(jumpsCopies, jumpComparator);
+		
+		System.out.println("Jump copy sorted");
+		System.out.println(AbaloneState.listListIntegerToString(jumpsCopies));
+		
+		currentBoard = abaloneState.applyJumpOnBoard(jumpsCopies).getBoard();
 		String nextPlayerId = yourPlayerIndex == 0 ? playerIds.get(1) : playerIds.get(0);
 		List<Operation> moves = Lists.<Operation>newArrayList(
 				new SetTurn(nextPlayerId),
 				new Set(BOARD, currentBoard), 
-				new Set(JUMP, jumps));
+				new Set(JUMP, jumpsCopies));
 		if(isGameOver) {
 			moves.add(new EndGame(playerIds.get(yourPlayerIndex)));
 		}
 		container.sendMakeMove(moves);
 		jumps = Lists.<ArrayList<Integer>>newArrayList();
 		lastJump = new int[5];
+		/*
+		 *  After clicking on the "Finish Jump Pieces" button, we send the moves to container,
+		 *  but then we also need to refresh the view, to make everything unclickable.
+		 */
+		if(!isGameOver) {
+			view.toHoldOnePiece(currentBoard, new boolean[BoardRowNum][BoardColNum], 
+					!jumps.isEmpty(), abaloneState.getTurn(), isGameOver ? GAMEOVER : UNDERGOING);
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -482,8 +525,9 @@ public class AbalonePresenter {
 	 * for this being-held piece. Format as following: {{4, 5}, {5, 6}}
 	 */
 	public boolean[][] getPlacableMatrix (int startX, int startY){
-		Collections.sort(jumps, jumpComparator);
-		currentBoard = abaloneState.applyJumpOnBoard(jumps).getBoard();
+		jumpsCopies = Lists.<ArrayList<Integer>>newArrayList(jumps);
+		Collections.sort(jumpsCopies, jumpComparator);
+		currentBoard = abaloneState.applyJumpOnBoard(jumpsCopies).getBoard();
 		String pieceColor = currentBoard.get(startX).get(startY);
 		boolean[][] placableMatrix = new boolean[BoardRowNum][BoardColNum];
 		placableMatrix[startX][startY] = true;

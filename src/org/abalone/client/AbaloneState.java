@@ -69,8 +69,6 @@ public class AbaloneState {
 		for(int i = 0; i < board.size(); i++) {
 			newBoard.add((ArrayList<String>)board.get(i).clone());
 		}
-		// variable used to stand for whether the current player wins the game.
-		boolean youWin = false;
 		
 		for(List<Integer> jump : jumps) {
 			int startX = jump.get(0);
@@ -78,10 +76,6 @@ public class AbaloneState {
 			int endX = jump.get(2);
 			int endY = jump.get(3);
 			int pieceColor = jump.get(4);
-			
-			if(AbaloneConstants.scoreSquares.contains(ImmutableList.<Integer>of(endX, endY))){
-				youWin = true;
-			}
 			
 			if( AbaloneConstants.illegalSquares.contains(ImmutableList.<Integer>of(startX, startY)) || 
 					AbaloneConstants.illegalSquares.contains(ImmutableList.<Integer>of(endX, endY)) ) {
@@ -158,6 +152,42 @@ public class AbaloneState {
 				Objects.equals(isGameEnd, otherState.getIsGameEnd()) &&
 				Objects.equals(board, otherState.getBoard()) &&
 				Objects.equals(jump, otherState.getJump());
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder strBuilder = new StringBuilder();
+		strBuilder.append("playerIds: \n");
+		strBuilder.append(playerIds.toString() + "\n");
+		strBuilder.append("turn: \n");
+		strBuilder.append(turn + "\n");
+		strBuilder.append("board: \n");
+		strBuilder.append(listListToString(board) + "\n");
+		strBuilder.append("jump: \n");
+		strBuilder.append(listListIntegerToString(jump) + "\n");
+		return strBuilder.toString();
+	}
+	
+	public static String listListToString(List<ArrayList<String>> listList){
+		StringBuilder strBuilder = new StringBuilder();
+		for(int i = 0; i < listList.size(); i++) {
+			for(int j = 0; j < listList.get(i).size(); j++) {
+				strBuilder.append(listList.get(i).get(j).toString() + ", ");
+			}
+			strBuilder.append("\n");
+		}
+		return strBuilder.toString();	
+	}
+	
+	public static String listListIntegerToString(List<ArrayList<Integer>> listList){
+		StringBuilder strBuilder = new StringBuilder();
+		for(int i = 0; i < listList.size(); i++) {
+			for(int j = 0; j < listList.get(i).size(); j++) {
+				strBuilder.append(listList.get(i).get(j).toString() + ", ");
+			}
+			strBuilder.append("\n");
+		}
+		return strBuilder.toString();	
 	}
 	
 	public String getTurn() {
