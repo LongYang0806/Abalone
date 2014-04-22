@@ -12,6 +12,7 @@ import static org.abalone.client.AbaloneConstants.picHight;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.abalone.client.AbaloneConstants;
 import org.abalone.client.AbalonePresenter;
 import org.abalone.client.AbalonePresenter.View;
 import org.abalone.sounds.GameSounds;
@@ -32,6 +33,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.Timer;
 
 /**
  * Class used to implement {@link View}
@@ -114,9 +116,20 @@ public class AbaloneGraphics extends Composite implements View {
 	
 	@Override
 	public void toHoldOnePiece(List<ArrayList<String>> board, boolean[][] holdableMatrix, 
-			boolean enableFinishButton, String turn, String message) {
+			boolean enableFinishButton, String turn, String message, List<ArrayList<Integer>> jumps) {
+		final List<ArrayList<String>> finalBoard = board;
+		final boolean[][] finalHoldableMatrix = holdableMatrix;
+		List<ArrayList<String>> boardWithoutJumps = Lists.<ArrayList<String>>newArrayList();
+		copyBoardWithJumps(board, boardWithoutJumps, jumps);
+		Timer animationTimer = new Timer() {
+			@Override
+			public void run() {
+				placeBoardWithPieces(finalBoard, finalHoldableMatrix);
+			}
+		};
 		placeBoardWithSquare(board, new boolean[BoardRowNum][BoardColNum]);
-		placeBoardWithPieces(board, holdableMatrix);
+		animationTimer.schedule(1000);
+		placeBoardWithPieces(boardWithoutJumps, holdableMatrix);
 		finishRoundBtn.setEnabled(enableFinishButton);
 		String winnerMessage = "Game Over and the winner is: " + turn;
 		if(message.equals(GAMEOVER)) {
@@ -274,6 +287,23 @@ public class AbaloneGraphics extends Composite implements View {
 		animation = new PieceMovingAnimation(startImage, endImage, startRes, 
 				endRes, blankRes, pieceDown);
 		animation.run(1000);
+	}
+	
+	private void copyBoardWithJumps(List<ArrayList<String>> fromList, 
+			List<ArrayList<String>> toList, List<ArrayList<Integer>> jumps) {
+		// 1. Copy the list from "fromList" to "toList"
+		for (List<String> list: fromList) {
+			ArrayList<String> copiedList = Lists.<String>newArrayList(list);
+			toList.add(copiedList);
+		}
+		// 2. Set the jumps' destination with "Empty" sign
+		if(jumps != null && !jumps.isEmpty()) {
+			for (List<Integer> list : jumps) {
+				int x = list.get(2);
+				int y = list.get(3);
+				toList.get(x).set(y, AbaloneConstants.E);
+			}
+		}
 	}
 	
 }

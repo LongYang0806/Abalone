@@ -80,7 +80,7 @@ public class AbalonePresenter {
 		 * @param message
 		 */
 		public void toHoldOnePiece(List<ArrayList<String>> board, boolean[][] holdableMatrix, 
-				boolean enableFinishButton, String turn, String message);
+				boolean enableFinishButton, String turn, String message, List<ArrayList<Integer>> jumps);
 		
 		/**
 		 * Method to be implement for place the pieces after {@code AbalonePresenter#pieceHold()}
@@ -176,7 +176,7 @@ public class AbalonePresenter {
 		// this is my turn, so I need to make the move.
 		if(myTurn.isPresent() && myTurn.get().equals(currentTurn)){
 			view.toHoldOnePiece(abaloneState.getBoard(), getEnableSquares(abaloneState.getBoard(), 
-					myTurn.get()), !jumps.isEmpty(), myTurn.get(), UNDERGOING);
+					myTurn.get()), !jumps.isEmpty(), myTurn.get(), UNDERGOING, jumps);
 		}
 		// if not my round, I just watch, nothing needed to be done!
 	}
@@ -217,7 +217,7 @@ public class AbalonePresenter {
 						jump.get(3), jump.get(4));
 			}
 			view.toHoldOnePiece(currentBoard, holdableMatrix, 
-					!jumps.isEmpty(), abaloneState.getTurn(), UNDERGOING);
+					!jumps.isEmpty(), abaloneState.getTurn(), UNDERGOING, jumps);
 		} else {
 			List<Integer> reverseCurrentJump = Lists.<Integer>newArrayList(x, y, heldX, heldY, piece);
 			if(jumps.contains(reverseCurrentJump)) {
@@ -241,7 +241,7 @@ public class AbalonePresenter {
 							jump.get(3), jump.get(4));
 				}
 				view.toHoldOnePiece(appliedJumpsBoard, holdableMatrix, 
-						!jumps.isEmpty(), abaloneState.getTurn(), UNDERGOING);
+						!jumps.isEmpty(), abaloneState.getTurn(), UNDERGOING, jumps);
 			} else {
 				ArrayList<Integer> thisJump = Lists.newArrayList(heldX, heldY, x, y, piece);
 				lastJump = new int[5];
@@ -260,7 +260,7 @@ public class AbalonePresenter {
 								jump.get(3), jump.get(4));
 					}
 					view.toHoldOnePiece(appliedJumpsBoard, holdableMatrix, 
-							!jumps.isEmpty(), abaloneState.getTurn(), UNDERGOING);
+							!jumps.isEmpty(), abaloneState.getTurn(), UNDERGOING, jumps);
 				} else {
 					/*
 					 *  because we have make sure the place is legal, we can directly get the pushed pieces,
@@ -276,7 +276,7 @@ public class AbalonePresenter {
 								jump.get(3), jump.get(4));
 					}
 					view.toHoldOnePiece(appliedJumpsBoard, holdableMatrix, 
-							!jumps.isEmpty(), abaloneState.getTurn(), abaloneMessage);
+							!jumps.isEmpty(), abaloneState.getTurn(), abaloneMessage, jumps);
 				}
 			}
 		}
@@ -314,7 +314,7 @@ public class AbalonePresenter {
 		 */
 		if(!isGameOver) {
 			view.toHoldOnePiece(currentBoard, new boolean[BoardRowNum][BoardColNum], 
-					!jumps.isEmpty(), abaloneState.getTurn(), isGameOver ? GAMEOVER : UNDERGOING);
+					!jumps.isEmpty(), abaloneState.getTurn(), isGameOver ? GAMEOVER : UNDERGOING, jumps);
 		}
 	}
 	
