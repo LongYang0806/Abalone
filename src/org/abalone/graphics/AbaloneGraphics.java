@@ -6,8 +6,8 @@ import static org.abalone.client.AbaloneConstants.BoardRowNum;
 import static org.abalone.client.AbaloneConstants.E;
 import static org.abalone.client.AbaloneConstants.GAMEOVER;
 import static org.abalone.client.AbaloneConstants.W;
-import static org.abalone.client.AbaloneConstants.picWidth;
 import static org.abalone.client.AbaloneConstants.picHight;
+import static org.abalone.client.AbaloneConstants.picWidth;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,13 +27,12 @@ import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.Timer;
 
 /**
  * Class used to implement {@link View}
@@ -53,9 +52,9 @@ public class AbaloneGraphics extends Composite implements View {
   private GameSounds gameSounds;
   private AbaloneImages abaloneImages;
   private AbalonePresenter abalonePresenter;
-  private AbsolutePanel innerBoard;
-  private String innerBoardWidth = "760px";
-  private String innerBoardHeight = "440px";
+  private AbaloneAbsolutePanel innerBoard;
+  private String innerBoardWidth = "475px";
+  private String innerBoardHeight = "275px";
   private boolean isGameOver = false;
   private boolean isPieceTurn = true;
   private Image[][] squareImages = new Image[BoardRowNum][BoardColNum];
@@ -74,7 +73,7 @@ public class AbaloneGraphics extends Composite implements View {
   	gameSounds = GWT.create(GameSounds.class);
   	abaloneImages = GWT.create(AbaloneImages.class);
   	AbaloneGraphicsUiBinder uiBinder = GWT.create(AbaloneGraphicsUiBinder.class);
-  	innerBoard = new AbsolutePanel();
+  	innerBoard = new AbaloneAbsolutePanel();
   	innerBoard.setSize(innerBoardWidth, innerBoardHeight);
     initWidget(uiBinder.createAndBindUi(this));
     

@@ -43,8 +43,8 @@ public class AbaloneConstants {
 	/*
 	 *	Pictures configuration information
 	 */
-  public static int picWidth = 40;
-  public static int picHight = 40;
+  public static int picWidth = 25;
+  public static int picHight = 25;
 	
 	/* 
 	 * Initial board for initial operations.

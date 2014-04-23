@@ -5,6 +5,7 @@
   <inherits name='com.google.gwt.user.User'/>
   <inherits name='com.google.common.collect.Collect'/>
   <inherits name='com.allen_sauer.gwt.dnd.gwt-dnd'/>
+  <inherits name="com.googlecode.mgwt.MGWT"/>
   <!-- Inherit the default GWT style sheet.  You can change       -->
   <!-- the theme of your GWT application by uncommenting          -->
   <!-- any one of the following lines.                            -->
@@ -20,6 +21,7 @@
   <!-- Specify the app entry point class.                         -->
   <entry-point class='org.abalone.graphics.AbaloneEntryPoint'/>
 
+  
   <!-- Specify the paths for translatable code                    -->
   <source path='abalone'/>
   <source path='game_api'/>
