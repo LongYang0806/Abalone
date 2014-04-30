@@ -13,6 +13,9 @@
   <!-- <inherits name='com.google.gwt.user.theme.standard.Standard'/> -->
   <!-- <inherits name='com.google.gwt.user.theme.chrome.Chrome'/> -->
   <!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/>     -->
+  
+  <!-- i18n for Simplify Chinese -->
+  <extend-property name="locale" values="zh" />
 
   <!-- PlayN related module inherits   tripleplay.TriplePlay      -->
 

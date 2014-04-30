@@ -2,6 +2,7 @@ package org.abalone.graphics;
 
 import org.abalone.client.AbaloneLogic;
 import org.abalone.client.AbalonePresenter;
+import org.abalone.i18n.AbaloneMessages;
 import org.game_api.GameApi;
 import org.game_api.GameApi.Game;
 import org.game_api.GameApi.IteratingPlayerContainer;
@@ -9,6 +10,7 @@ import org.game_api.GameApi.UpdateUI;
 import org.game_api.GameApi.VerifyMove;
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -25,6 +27,8 @@ public class AbaloneEntryPoint implements EntryPoint {
 	IteratingPlayerContainer container;
 // 	ContainerConnector container;
 	AbalonePresenter abalonePresenter;
+	
+	private AbaloneMessages abaloneMessages = GWT.create(AbaloneMessages.class);
 
 	@Override
 	public void onModuleLoad() {
@@ -60,29 +64,32 @@ public class AbaloneEntryPoint implements EntryPoint {
 		
 		final HorizontalPanel buttonGroup = new HorizontalPanel();
 		final ButtonCss buttonCss = MGWTStyle.getTheme().getMGWTClientBundle().getButtonCss();
-    final Button redPlayer = new Button("White player");
-    final Button blackPlayer = new Button("Red player");
-    final Button viewer = new Button("Viewer"); 
+    final Button whitePlayer = new Button(abaloneMessages.whitePlayer());
+    final Button redPlayer = new Button(abaloneMessages.redPlayer());
+    final Button viewer = new Button(abaloneMessages.viewer()); 
+    whitePlayer.setSmall(true);
     redPlayer.setSmall(true);
-    blackPlayer.setSmall(true);
     viewer.setSmall(true);
     
-    redPlayer.addTapHandler(new TapHandler() {
+    // white player plays first
+    whitePlayer.addStyleName(buttonCss.active());
+    
+    whitePlayer.addTapHandler(new TapHandler() {
       @Override
       public void onTap(TapEvent event) {
         container.updateUi(container.getPlayerIds().get(0));
-        redPlayer.addStyleName(buttonCss.active());
-        blackPlayer.removeStyleName(buttonCss.active());
+        whitePlayer.addStyleName(buttonCss.active());
+        redPlayer.removeStyleName(buttonCss.active());
         viewer.removeStyleName(buttonCss.active());
       }                    
     });
     
-    blackPlayer.addTapHandler(new TapHandler() {
+    redPlayer.addTapHandler(new TapHandler() {
       @Override
       public void onTap(TapEvent event) {
         container.updateUi(container.getPlayerIds().get(1));
-        blackPlayer.addStyleName(buttonCss.active());
-        redPlayer.removeStyleName(buttonCss.active());
+        redPlayer.addStyleName(buttonCss.active());
+        whitePlayer.removeStyleName(buttonCss.active());
         viewer.removeStyleName(buttonCss.active());
       }                    
     });
@@ -92,13 +99,13 @@ public class AbaloneEntryPoint implements EntryPoint {
       public void onTap(TapEvent event) {
         container.updateUi(GameApi.VIEWER_ID);
         viewer.addStyleName(buttonCss.active());
+        whitePlayer.removeStyleName(buttonCss.active());
         redPlayer.removeStyleName(buttonCss.active());
-        blackPlayer.removeStyleName(buttonCss.active());
       }                    
     }); 
     
+    buttonGroup.add(whitePlayer);
     buttonGroup.add(redPlayer);
-    buttonGroup.add(blackPlayer);
     buttonGroup.add(viewer);
 		
 		FlowPanel flowPanel = new FlowPanel();

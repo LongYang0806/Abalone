@@ -15,6 +15,7 @@ import java.util.List;
 import org.abalone.client.AbaloneConstants;
 import org.abalone.client.AbalonePresenter;
 import org.abalone.client.AbalonePresenter.View;
+import org.abalone.i18n.AbaloneMessages;
 import org.abalone.sounds.GameSounds;
 
 import com.google.common.collect.Lists;
@@ -49,6 +50,7 @@ public class AbaloneGraphics extends Composite implements View {
   @UiField
   Button finishRoundBtn;
   
+  private AbaloneMessages abaloneMessages = GWT.create(AbaloneMessages.class);
   private GameSounds gameSounds;
   private AbaloneImages abaloneImages;
   private AbalonePresenter abalonePresenter;
@@ -84,6 +86,7 @@ public class AbaloneGraphics extends Composite implements View {
       pieceDown.addSource(gameSounds.pieceDownWav().getSafeUri()
                       .asString(), AudioElement.TYPE_WAV);
     }
+    finishRoundBtn.setText(abaloneMessages.finishThisRound());
   }
   
   @UiHandler("finishRoundBtn")
@@ -130,16 +133,18 @@ public class AbaloneGraphics extends Composite implements View {
 		animationTimer.schedule(1000);
 		placeBoardWithPieces(boardWithoutJumps, holdableMatrix);
 		finishRoundBtn.setEnabled(enableFinishButton);
-		String winnerMessage = "Game Over and the winner is: " + turn;
+		String winnerMessage = abaloneMessages.gameOver(
+				turn.equalsIgnoreCase(AbaloneConstants.WTurn) ? abaloneMessages.whitePlayer() :
+					abaloneMessages.redPlayer());
 		if(message.equals(GAMEOVER)) {
 			isGameOver = true;
-			List<String> options = Lists.newArrayList("OK");
+			List<String> options = Lists.newArrayList(abaloneMessages.ok());
 			abalonePresenter.finishAllPlacing(isGameOver);
 			new PopupChoices(winnerMessage, options,
 					new PopupChoices.OptionChosen() {
 				@Override
 				public void optionChosen(String option) {
-					if (option.equals("OK")) {
+					if (option.equals(abaloneMessages.ok())) {
 					}
 				}
 			}).center();
@@ -152,16 +157,18 @@ public class AbaloneGraphics extends Composite implements View {
 		placeBoardWithSquare(board, placableMatrix);
 		placeBoardWithPieces(board, placableMatrix);
 		finishRoundBtn.setEnabled(enableFinishButton);
-		String winnerMessage = "Game Over and the winner is: " + turn;
+		String winnerMessage = abaloneMessages.gameOver(
+				turn.equalsIgnoreCase(AbaloneConstants.WTurn) ? abaloneMessages.whitePlayer() :
+					abaloneMessages.redPlayer());
 		if(message.equals(GAMEOVER)){ 
 			isGameOver = true;
-			List<String> options = Lists.newArrayList("OK");
+			List<String> options = Lists.newArrayList(abaloneMessages.ok());
 			abalonePresenter.finishAllPlacing(isGameOver);
 			new PopupChoices(winnerMessage, options,
 					new PopupChoices.OptionChosen() {
 				@Override
 				public void optionChosen(String option) {
-					if (option.equals("OK")) {
+					if (option.equals(abaloneMessages.ok())) {
 					}
 				}
 			}).center();

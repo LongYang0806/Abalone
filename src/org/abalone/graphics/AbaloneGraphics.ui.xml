@@ -5,7 +5,7 @@
   <g:VerticalPanel>
     <g:HorizontalPanel height="275px" width="475px" ui:field="outerBoard"/>
     <g:HorizontalPanel height="30px" width="475px">
-      <g:Button ui:field="finishRoundBtn" text="Finish jumping pieces"/>
+      <g:Button ui:field="finishRoundBtn"/>
     </g:HorizontalPanel>
   </g:VerticalPanel>
 </ui:UiBinder> 
