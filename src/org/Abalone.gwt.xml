@@ -17,8 +17,6 @@
   <!-- i18n for Simplify Chinese -->
   <extend-property name="locale" values="zh" />
 
-  <!-- PlayN related module inherits   tripleplay.TriplePlay      -->
-
   <add-linker name='xsiframe' />
   
   <!-- Specify the app entry point class.                         -->
