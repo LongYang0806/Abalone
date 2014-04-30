@@ -188,6 +188,7 @@ public class AbaloneGraphics extends Composite implements View {
 				final int row = i;
 				final int col = j;
 				Image image = getImageBySquare(board.get(i).get(j), enableMatrix[i][j], i, j);
+				image.setAltText(row + "," + col);
 				abaloneDropController = new AbaloneDropController(image, abalonePresenter);
 				abaloneDragController.registerDropController(abaloneDropController);
 				image.addClickHandler(new ClickHandler() {
@@ -240,6 +241,7 @@ public class AbaloneGraphics extends Composite implements View {
 						image = new Image(imageRes);
 					}
 				}
+				image.setAltText(row + "," + col);
 				if(isAPiece) {
 					// only when you have the turn, the piece is enabled onClick();
 					if(enableMatrix[i][j]) {

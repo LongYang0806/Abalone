@@ -23,15 +23,20 @@ public class PieceMovingAnimation extends Animation {
     piece = startRes;
     transform = endRes == null ? startRes : endRes;
     panel = (AbsolutePanel) start.getParent();
-    startX = panel.getWidgetLeft(start);
-    startY = panel.getWidgetTop(start);
+    String[] startCoords = start.getAltText().split(",");
+    String[] endCoords = end.getAltText().split(",");
+    int startRow = Integer.parseInt(startCoords[0]);
+    int startCol = Integer.parseInt(startCoords[1]);
+    int endRow = Integer.parseInt(endCoords[0]);
+    int endCol = Integer.parseInt(endCoords[1]);
+    startX = startCol * start.getWidth();
+    startY = startRow * start.getHeight();
+    endX = endCol * end.getWidth();
+    endY = endRow * end.getHeight();
     startWidth = startImage.getWidth();
     startHeight = startImage.getHeight();
-    endX = panel.getWidgetLeft(end);
-    endY = panel.getWidgetTop(end);
-    soundAtEnd = sfx;
     cancelled = false;
-
+    
     start.setResource(blankRes);
     moving = new Image(startRes);
     moving.setPixelSize(startWidth, startHeight);
