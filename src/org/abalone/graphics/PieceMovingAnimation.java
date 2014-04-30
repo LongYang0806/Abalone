@@ -1,5 +1,7 @@
 package org.abalone.graphics;
 
+import quicktime.app.players.Playable;
+
 import com.google.gwt.animation.client.Animation;
 import com.google.gwt.media.client.Audio;
 import com.google.gwt.resources.client.ImageResource;
@@ -36,6 +38,7 @@ public class PieceMovingAnimation extends Animation {
     startWidth = startImage.getWidth();
     startHeight = startImage.getHeight();
     cancelled = false;
+    soundAtEnd = sfx;
     
     start.setResource(blankRes);
     moving = new Image(startRes);
