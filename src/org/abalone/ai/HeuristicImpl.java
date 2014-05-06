@@ -39,6 +39,7 @@ public class HeuristicImpl implements Heuristic {
 			}
 		}
 		
+		String turn = state.getTurn();
 		getAllPossibleMoves(state);
 		int totalScore = 0;
 		if(!winningJumps.isEmpty()) {
@@ -52,7 +53,16 @@ public class HeuristicImpl implements Heuristic {
 					threeToOne * threeToOneJumps.size() +
 					threeToTwo * threeToTwoJumps.size();
 		}
-		return totalScore;
+		if (turn.equals(AbaloneConstants.WTurn)) {
+			return totalScore;
+		} else {
+			if (totalScore == Integer.MAX_VALUE) {
+				return Integer.MIN_VALUE;
+			} else {
+				return -totalScore;
+			}
+		}
+		
 	}
 
 	@Override
