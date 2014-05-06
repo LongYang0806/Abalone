@@ -41,6 +41,18 @@ public class AbaloneState {
 		this.isGameEnd = isGameEnd;
 	}
 	
+	public AbaloneState makeMove(ArrayList<Integer> move) {
+		if(move == null || move.isEmpty()) {
+			return this;
+		}
+		
+		// 1. Construct a new jump with List<ArrayList<Integer>> typed.
+		List<ArrayList<Integer>> jump = new ArrayList<ArrayList<Integer>>();
+		jump.add(move);
+		// 2. Get the result board.
+		return applyJumpOnBoard(jump);
+	}
+	
 	/**
 	 * Assume that the input {@code jumps} are sorted based on their move direction
 	 * @param jumps the format is as following:

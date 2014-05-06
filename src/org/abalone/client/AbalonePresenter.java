@@ -6,8 +6,8 @@ import static org.abalone.client.AbaloneConstants.BTurn;
 import static org.abalone.client.AbaloneConstants.BoardColNum;
 import static org.abalone.client.AbaloneConstants.BoardRowNum;
 import static org.abalone.client.AbaloneConstants.E;
-import static org.abalone.client.AbaloneConstants.I;
 import static org.abalone.client.AbaloneConstants.GAMEOVER;
+import static org.abalone.client.AbaloneConstants.I;
 import static org.abalone.client.AbaloneConstants.JUMP;
 import static org.abalone.client.AbaloneConstants.S;
 import static org.abalone.client.AbaloneConstants.UNDERGOING;
@@ -19,6 +19,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.abalone.ai.AlphaBetaPruning;
+import org.abalone.ai.DateTimer;
+import org.abalone.ai.Heuristic;
+import org.abalone.ai.HeuristicImpl;
 import org.game_api.GameApi.Container;
 import org.game_api.GameApi.EndGame;
 import org.game_api.GameApi.Operation;
@@ -122,6 +126,14 @@ public class AbalonePresenter {
 	private String abaloneMessage = "";
 	private List<String> playerIds;
 	
+	/**
+	 * Constructor used to construct a utility {@link AbalonePresenter}
+	 */
+	public AbalonePresenter() {
+		this.view = null;
+		this.container = null;
+	}
+	
 	public AbalonePresenter(View view, Container container) {
 		this.view = view;
 		this.container = container;
@@ -166,8 +178,24 @@ public class AbalonePresenter {
 			return;
 		}
 		if(updateUI.isAiPlayer()){
-			//TODO: to be finished in HW4
-			//container.sentMakeMove();
+			Heuristic heuristic = new HeuristicImpl();
+			AlphaBetaPruning alphaBetaPruning = new AlphaBetaPruning(heuristic, abaloneState);
+			DateTimer timer = new DateTimer(500);
+			int depth = 4;
+			ArrayList<ArrayList<Integer>> move = alphaBetaPruning.findBestMove(abaloneState, depth, timer);
+			jumps = move;
+			
+			boolean[][] holdableMatrix = getEnableSquares(abaloneState.getBoard(), abaloneState.getTurn());
+			jumpsCopies = Lists.<ArrayList<Integer>>newArrayList(jumps);
+			Collections.sort(jumpsCopies, jumpComparator);
+			List<ArrayList<String>> appliedJumpsBoard = abaloneState.applyJumpOnBoard(jumpsCopies).getBoard();
+			for(List<Integer> jump : jumps) {
+				view.animateMove(jump.get(0), jump.get(1), jump.get(2), 
+						jump.get(3), jump.get(4));
+			}
+			view.toHoldOnePiece(appliedJumpsBoard, holdableMatrix, 
+					!jumps.isEmpty(), abaloneState.getTurn(), UNDERGOING, jumps);
+			
 			return;
 		}
 		// So now, it must be a player.
@@ -185,7 +213,7 @@ public class AbalonePresenter {
 		if(x < 0 || y < 0 || x > BoardRowNum || y > BoardColNum) {
 			throw new RuntimeException("index for held piece should be valid!");
 		}
-		System.out.println("Held one Piece : " + "(" + x + ", " + y + ")");
+//		System.out.println("Held one Piece : " + "(" + x + ", " + y + ")");
 		
 		heldX = x;
 		heldY = y;
@@ -201,7 +229,7 @@ public class AbalonePresenter {
 		if(x < 0 || y < 0 || x > BoardRowNum || y > BoardColNum) {
 			throw new RuntimeException("index for held piece should be valid!");
 		}
-		System.out.println("Place one Piece : " + "(" + x + ", " + y + ")");
+//		System.out.println("Place one Piece : " + "(" + x + ", " + y + ")");
 		// currentBoard is the board which before this jump, apply all the previous jumps.
 		jumpsCopies = Lists.<ArrayList<Integer>>newArrayList(jumps);
 		Collections.sort(jumpsCopies, jumpComparator);
@@ -283,18 +311,18 @@ public class AbalonePresenter {
 	}
 	
 	public void finishAllPlacing(boolean isGameOver) {
-		System.out.println("Jump");
-		System.out.println(AbaloneState.listListIntegerToString(jumps));
+//		System.out.println("Jump");
+//		System.out.println(AbaloneState.listListIntegerToString(jumps));
 		
 		jumpsCopies = Lists.<ArrayList<Integer>>newArrayList(jumps);
 		
-		System.out.println("Jump copy");
-		System.out.println(AbaloneState.listListIntegerToString(jumpsCopies));
+//		System.out.println("Jump copy");
+//		System.out.println(AbaloneState.listListIntegerToString(jumpsCopies));
 		
 		Collections.sort(jumpsCopies, jumpComparator);
 		
-		System.out.println("Jump copy sorted");
-		System.out.println(AbaloneState.listListIntegerToString(jumpsCopies));
+//		System.out.println("Jump copy sorted");
+//		System.out.println(AbaloneState.listListIntegerToString(jumpsCopies));
 		
 		currentBoard = abaloneState.applyJumpOnBoard(jumpsCopies).getBoard();
 		String nextPlayerId = yourPlayerIndex == 0 ? playerIds.get(1) : playerIds.get(0);
@@ -447,12 +475,12 @@ public class AbalonePresenter {
 	
 	/**
 	 * Method used to get the following possible pieces to make following moves, to be called
-	 * in {@code #placedOnePiece()} then, inside it, it will call {@code View#toHoldOnePiece()}
+	 * in {@link #placedOnePiece()} then, inside it, it will call {@link View#toHoldOnePiece()}
 	 * @param board input board
 	 * @param turn input turn
 	 * @return 2D boolean array, which indicate where should be highlighted.
 	 */
-	private boolean[][] getEnableSquares(List<ArrayList<String>> board, String turn){
+	public boolean[][] getEnableSquares(List<ArrayList<String>> board, String turn){
 		if(board == null || board.isEmpty()){
 			throw new IllegalArgumentException("Input board should not be null or empty! For "
 					+ "getEnableSquares method from AbalonePresenter class");

@@ -64,14 +64,14 @@ public class AbaloneLogic {
 		// 1. The transformation should be correct.
 		@SuppressWarnings("unchecked")
 		List<ArrayList<Integer>> jumps = (List<ArrayList<Integer>>) ((Set)lastMove.get(2)).getValue();
-		System.out.println("Logic Jumps");
+//		System.out.println("Logic Jumps");
 		AbaloneState abaloneStateLast = 
 				AbaloneState.gameApiState2AbaloneState(lastState, turn, playerIds);
 		AbaloneState abaloneStateNow = 
 				AbaloneState.gameApiState2AbaloneState(state, turn, playerIds);
 		AbaloneState abaloneStateTransformed = abaloneStateLast.applyJumpOnBoard(jumps);
-		System.out.println(abaloneStateNow);
-		System.out.println(abaloneStateTransformed);
+//		System.out.println(abaloneStateNow);
+//		System.out.println(abaloneStateTransformed);
 		check(abaloneStateNow.equals(abaloneStateTransformed), 
 				"LastState applied lastMove should get current State");		
 		

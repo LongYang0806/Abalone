@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
-	<classpathentry kind="src" path="documents"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry exported="true" kind="lib" path="/Users/longyang/Java jars/jar file/guava-16.0.1.jar"/>
@@ -25,5 +24,6 @@
 	<classpathentry kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER"/>
 	<classpathentry exported="true" kind="lib" path="/Users/longyang/Java jars/jar file/gwt-dnd-3.3.0.jar"/>
 	<classpathentry kind="lib" path="/Users/longyang/Java jars/jar file/mgwt-1.2.0.jar"/>
+	<classpathentry kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER/appengine-java-sdk-1.9.0"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
