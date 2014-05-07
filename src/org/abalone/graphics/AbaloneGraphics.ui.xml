@@ -3,8 +3,8 @@
   xmlns:g="urn:import:com.google.gwt.user.client.ui"
   xmlns:mgwt="urn:import:com.googlecode.mgwt.ui.client.widget">
   <g:VerticalPanel>
-    <g:HorizontalPanel height="275px" width="475px" ui:field="outerBoard"/>
-    <g:HorizontalPanel height="30px" width="475px">
+    <g:HorizontalPanel height="275px" width="500px" ui:field="outerBoard"/>
+    <g:HorizontalPanel height="45px" width="500px">
       <g:Button ui:field="finishRoundBtn"/>
     </g:HorizontalPanel>
   </g:VerticalPanel>

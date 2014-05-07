@@ -55,7 +55,7 @@ public class AbaloneGraphics extends Composite implements View {
   private AbaloneImages abaloneImages;
   private AbalonePresenter abalonePresenter;
   private AbaloneAbsolutePanel innerBoard;
-  private String innerBoardWidth = "475px";
+  private String innerBoardWidth = "525px";
   private String innerBoardHeight = "275px";
   private boolean isGameOver = false;
   private boolean isPieceTurn = true;
@@ -189,15 +189,17 @@ public class AbaloneGraphics extends Composite implements View {
 				final int col = j;
 				Image image = getImageBySquare(board.get(i).get(j), enableMatrix[i][j], i, j);
 				image.setAltText(row + "," + col);
-				abaloneDropController = new AbaloneDropController(image, abalonePresenter);
-				abaloneDragController.registerDropController(abaloneDropController);
-				image.addClickHandler(new ClickHandler() {
-					@Override
-					public void onClick(ClickEvent event) {
-						isPieceTurn = !isPieceTurn;
-						abalonePresenter.placedOnePiece(row, col);
-          } 
-				});
+				if(enableMatrix[row][col]) {
+					abaloneDropController = new AbaloneDropController(image, abalonePresenter);
+					abaloneDragController.registerDropController(abaloneDropController);
+					image.addClickHandler(new ClickHandler() {
+						@Override
+						public void onClick(ClickEvent event) {
+							isPieceTurn = !isPieceTurn;
+							abalonePresenter.placedOnePiece(row, col);
+	          } 
+					});
+				}
 				image.setStyleName("imgSquare");
 				innerBoard.add(image, j * picHight, i * picWidth);
 				squareImages[i][j] = image;
