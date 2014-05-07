@@ -47,8 +47,8 @@ public class AbaloneGraphics extends Composite implements View {
   
   @UiField
   HorizontalPanel outerBoard;
-  @UiField
-  Button finishRoundBtn;
+//  @UiField
+//  Button finishRoundBtn;
   
   private AbaloneMessages abaloneMessages = GWT.create(AbaloneMessages.class);
   private GameSounds gameSounds;
@@ -86,14 +86,14 @@ public class AbaloneGraphics extends Composite implements View {
       pieceDown.addSource(gameSounds.pieceDownWav().getSafeUri()
                       .asString(), AudioElement.TYPE_WAV);
     }
-    finishRoundBtn.setText(abaloneMessages.finishThisRound());
+//    finishRoundBtn.setText(abaloneMessages.finishThisRound());
   }
   
-  @UiHandler("finishRoundBtn")
-  void onClickClaimBtn(ClickEvent e) {
-    finishRoundBtn.setEnabled(false);
-    abalonePresenter.finishAllPlacing(isGameOver);
-  }
+//  @UiHandler("finishRoundBtn")
+//  void onClickClaimBtn(ClickEvent e) {
+//    finishRoundBtn.setEnabled(false);
+//    abalonePresenter.finishAllPlacing(isGameOver);
+//  }
   
 	@Override
 	public void setPresenter(AbalonePresenter abalonePresenter) {
@@ -110,7 +110,7 @@ public class AbaloneGraphics extends Composite implements View {
 			String message){
 		placeBoardWithSquare(board, new boolean[BoardRowNum][BoardColNum]);
 		placeBoardWithPieces(board, enableMatrix);
-		finishRoundBtn.setEnabled(false);
+//		finishRoundBtn.setEnabled(false);
 		if(message.equals(GAMEOVER)){
 			//TODO should throw out box to say whose is the winner.
 		}
@@ -132,7 +132,7 @@ public class AbaloneGraphics extends Composite implements View {
 		placeBoardWithSquare(board, new boolean[BoardRowNum][BoardColNum]);
 		animationTimer.schedule(500);
 		placeBoardWithPieces(boardWithoutJumps, holdableMatrix);
-		finishRoundBtn.setEnabled(enableFinishButton);
+//		finishRoundBtn.setEnabled(enableFinishButton);
 		String winnerMessage = abaloneMessages.gameOver(
 				turn.equalsIgnoreCase(AbaloneConstants.WTurn) ? abaloneMessages.whitePlayer() :
 					abaloneMessages.redPlayer());
@@ -156,7 +156,7 @@ public class AbaloneGraphics extends Composite implements View {
 			boolean enableFinishButton, String turn, String message) {
 		placeBoardWithSquare(board, placableMatrix);
 		placeBoardWithPieces(board, placableMatrix);
-		finishRoundBtn.setEnabled(enableFinishButton);
+//		finishRoundBtn.setEnabled(enableFinishButton);
 		String winnerMessage = abaloneMessages.gameOver(
 				turn.equalsIgnoreCase(AbaloneConstants.WTurn) ? abaloneMessages.whitePlayer() :
 					abaloneMessages.redPlayer());

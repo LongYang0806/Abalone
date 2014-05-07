@@ -373,6 +373,7 @@ public class AbalonePresenter {
 				}
 			}
 		}
+		finishAllPlacing(GAMEOVER.equals(abaloneMessage));
 	}
 	
 	public void finishAllPlacing(boolean isGameOver) {
