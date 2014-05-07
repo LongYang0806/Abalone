@@ -202,6 +202,18 @@ public class AbaloneState {
 		return strBuilder.toString();	
 	}
 	
+	public static String getRedPointsString(List<ArrayList<String>> board) {
+	  StringBuilder strBuilder = new StringBuilder();
+	  for (int i = 0; i < AbaloneConstants.BoardRowNum; i++) {
+	    for (int j = 0; j < AbaloneConstants.BoardColNum; j++) {
+	      if(AbaloneConstants.B.equals(board.get(i).get(j))) {
+	        strBuilder.append("(" + i + "," + j + ")-");
+	      }
+	    }
+	  }
+	  return strBuilder.toString();
+	}
+	
 	public String getTurn() {
 		return turn;
 	}

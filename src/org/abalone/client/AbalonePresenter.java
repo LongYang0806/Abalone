@@ -97,6 +97,8 @@ public class AbalonePresenter {
 				boolean enableFinishButton, String turn, String message);
 		
 		public void animateMove(int startX, int startY, int endX, int endY, int color);
+		
+		public void popMessage(String message);
 	}
 		
 	public enum Direction{
@@ -178,57 +180,38 @@ public class AbalonePresenter {
 					new boolean[BoardRowNum][BoardColNum], UNDERGOING);
 			return;
 		}
+		
 		if(updateUI.isAiPlayer()){
-//			Heuristic heuristic = new HeuristicImpl();
-//			AlphaBetaPruning alphaBetaPruning = new AlphaBetaPruning(heuristic, abaloneState);
-//			DateTimer timer = new DateTimer(500);
-//			int depth = 4;
-//			ArrayList<ArrayList<Integer>> move = alphaBetaPruning.findBestMove(abaloneState, depth, timer);
-//			jumps = move;
-//			
-//			boolean[][] holdableMatrix = getEnableSquares(abaloneState.getBoard(), abaloneState.getTurn());
-//			jumpsCopies = Lists.<ArrayList<Integer>>newArrayList(jumps);
-//			Collections.sort(jumpsCopies, jumpComparator);
-//			List<ArrayList<String>> appliedJumpsBoard = abaloneState.applyJumpOnBoard(jumpsCopies).getBoard();
-//			for(List<Integer> jump : jumps) {
-//				view.animateMove(jump.get(0), jump.get(1), jump.get(2), 
-//						jump.get(3), jump.get(4));
-//			}
-//			view.toHoldOnePiece(appliedJumpsBoard, holdableMatrix, 
-//					!jumps.isEmpty(), abaloneState.getTurn(), UNDERGOING, jumps);
-			
 			// 1. get the start point.
 			boolean[][] holdableSquares = getEnableSquares(abaloneState.getBoard(), currentTurn);
-			boolean hasGotAIHeld = false;
-			for(int i = 0; i < AbaloneConstants.BoardRowNum && !hasGotAIHeld; i++) {
-				for(int j = 0; j < AbaloneConstants.BoardColNum && !hasGotAIHeld; j++) {
-					if(holdableSquares[i][j]) {
-						if(Math.random() > 0.5) {
-							heldX = i;
-							heldY = j;
-							hasGotAIHeld = true;
-							break;
-						}
-					}
-				}
-			}
+			List<ArrayList<Integer>> validPoints = getValidHoldablePoints(holdableSquares);
+			int randomValidPointIndex = (int) (Math.random() * validPoints.size());
+			heldX = validPoints.get(randomValidPointIndex).get(0);
+			heldY = validPoints.get(randomValidPointIndex).get(1);
+			
 			// 2. get the end point
 			boolean[][] placableSquares = getPlacableMatrix(heldX, heldY);
-			boolean hasPlaced = false;
+			boolean hasGotPlaced = false;
 			int placeX = 0;
 			int placeY = 0;
-			for(int i = 0; i < AbaloneConstants.BoardRowNum && !hasPlaced; i++) {
-				for(int j = 0; j < AbaloneConstants.BoardColNum && !hasPlaced; j++) {
+			for(int i = 0; i < AbaloneConstants.BoardRowNum && !hasGotPlaced; i++) {
+				for(int j = 0; j < AbaloneConstants.BoardColNum && !hasGotPlaced; j++) {
 					if(placableSquares[i][j]) {
-						if(Math.random() > 0.5) {
-							placeX = i;
-							placeY = j;
-							hasPlaced = true;
-							break;
+						if(i == heldX && j == heldY) {
+						  continue;
+						} else {
+						  placeX = i;
+						  placeY = j;
+						  hasGotPlaced = true;
+						  break;
 						}
 					}
 				}
 			}
+//			view.popMessage("Valid Points Number: " + validPoints.size());
+//			view.popMessage("HeldX: " + heldX + ", heldY: " + 
+//			    heldY + ", placeX: " + placeX + ", placeY: " + placeY);
+			
 			// 3. make the move
 			placedOnePiece(placeX, placeY);
 			// 4. finish this round.
@@ -236,15 +219,57 @@ public class AbalonePresenter {
 			
 			return;
 		}
+		
 		// So now, it must be a player.
 		view.setPlayerState(abaloneState.getBoard(),
 				getEnableSquares(abaloneState.getBoard(), abaloneState.getTurn()), UNDERGOING);
+//		view.popMessage(AbaloneState.getRedPointsString(abaloneState.getBoard()));
 		// this is my turn, so I need to make the move.
 		if(myTurn.isPresent() && myTurn.get().equals(currentTurn)){
 			view.toHoldOnePiece(abaloneState.getBoard(), getEnableSquares(abaloneState.getBoard(), 
 					myTurn.get()), !jumps.isEmpty(), myTurn.get(), UNDERGOING, jumps);
+//			view.popMessage(AbaloneState.getRedPointsString(abaloneState.getBoard()));
 		}
 		// if not my round, I just watch, nothing needed to be done!
+	}
+	
+	private List<ArrayList<Integer>> getValidHoldablePoints(boolean[][] holdableMatrix) {
+	  if (holdableMatrix == null || holdableMatrix.length == 0) {
+      throw new IllegalArgumentException("Input boolean matrix should not be null or empty!");
+    }
+	  
+	  List<ArrayList<Integer>> validPoints = Lists.<ArrayList<Integer>>newArrayList();
+	  for (int i = 0; i < AbaloneConstants.BoardRowNum; i++) {
+      for (int j = 0; j < AbaloneConstants.BoardColNum; j++) {
+        if (holdableMatrix[i][j]) {
+          boolean[][] placableMatrix = getPlacableMatrix(i, j);
+          int trueNum = getTrueNum(placableMatrix);
+          if (trueNum <= 0) {
+            throw new RuntimeException("trueNum should not be less than 1.");
+          }
+          if (trueNum > 1) {
+            validPoints.add(Lists.<Integer>newArrayList(i, j));
+          }
+        }
+      }
+    }
+	  return validPoints;
+	}
+	
+	private int getTrueNum(boolean[][] holdableMatrix) {
+	  if (holdableMatrix == null || holdableMatrix.length == 0) {
+	    throw new IllegalArgumentException("Input boolean matrix should not be null or empty!");
+	  }
+	  
+	  int trueNum = 0;
+	  for (int i = 0; i < AbaloneConstants.BoardRowNum; i++) {
+	    for (int j = 0; j < AbaloneConstants.BoardColNum; j++) {
+	      if (holdableMatrix[i][j]) {
+	        trueNum++;
+	      }
+	    }
+	  }
+	  return trueNum;
 	}
 	
 	public void heldOnePiece(int x, int y) {

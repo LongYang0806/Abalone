@@ -5,7 +5,7 @@
   <inherits name='com.google.gwt.user.User'/>
   <inherits name='com.google.common.collect.Collect'/>
   <inherits name='com.allen_sauer.gwt.dnd.gwt-dnd'/>
-  <inherits name="com.googlecode.mgwt.MGWT"/>
+  <!-- <inherits name="com.googlecode.mgwt.MGWT"/> -->
   <!-- Inherit the default GWT style sheet.  You can change       -->
   <!-- the theme of your GWT application by uncommenting          -->
   <!-- any one of the following lines.                            -->

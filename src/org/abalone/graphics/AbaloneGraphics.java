@@ -63,8 +63,8 @@ public class AbaloneGraphics extends Composite implements View {
   private Image[][] pieceImages = new Image[BoardRowNum][BoardColNum];
   private Audio pieceDown;
   private PieceMovingAnimation animation;
-  private AbaloneDragController abaloneDragController;
-  private AbaloneDropController abaloneDropController;
+//  private AbaloneDragController abaloneDragController;
+//  private AbaloneDropController abaloneDropController;
   
   /**
    * Constructor used to create an AbaloneGraphics object,
@@ -99,10 +99,10 @@ public class AbaloneGraphics extends Composite implements View {
 	public void setPresenter(AbalonePresenter abalonePresenter) {
 		this.abalonePresenter = abalonePresenter;
 		
-		abaloneDragController = new AbaloneDragController(innerBoard, false, abalonePresenter);
-    abaloneDragController.setBehaviorConstrainedToBoundaryPanel(true);
-    abaloneDragController.setBehaviorMultipleSelection(false);
-    abaloneDragController.setBehaviorDragStartSensitivity(1);
+//		abaloneDragController = new AbaloneDragController(innerBoard, false, abalonePresenter);
+//    abaloneDragController.setBehaviorConstrainedToBoundaryPanel(true);
+//    abaloneDragController.setBehaviorMultipleSelection(false);
+//    abaloneDragController.setBehaviorDragStartSensitivity(1);
 	}
 
 	@Override
@@ -130,7 +130,7 @@ public class AbaloneGraphics extends Composite implements View {
 			}
 		};
 		placeBoardWithSquare(board, new boolean[BoardRowNum][BoardColNum]);
-		animationTimer.schedule(1000);
+		animationTimer.schedule(500);
 		placeBoardWithPieces(boardWithoutJumps, holdableMatrix);
 		finishRoundBtn.setEnabled(enableFinishButton);
 		String winnerMessage = abaloneMessages.gameOver(
@@ -190,8 +190,8 @@ public class AbaloneGraphics extends Composite implements View {
 				Image image = getImageBySquare(board.get(i).get(j), enableMatrix[i][j], i, j);
 				image.setAltText(row + "," + col);
 				if(enableMatrix[row][col]) {
-					abaloneDropController = new AbaloneDropController(image, abalonePresenter);
-					abaloneDragController.registerDropController(abaloneDropController);
+//					abaloneDropController = new AbaloneDropController(image, abalonePresenter);
+//					abaloneDragController.registerDropController(abaloneDropController);
 					image.addClickHandler(new ClickHandler() {
 						@Override
 						public void onClick(ClickEvent event) {
@@ -247,7 +247,7 @@ public class AbaloneGraphics extends Composite implements View {
 				if(isAPiece) {
 					// only when you have the turn, the piece is enabled onClick();
 					if(enableMatrix[i][j]) {
-						abaloneDragController.makeDraggable(image);
+//						abaloneDragController.makeDraggable(image);
 						image.addClickHandler(new ClickHandler() {
 							@Override
 							public void onClick(ClickEvent event) {
@@ -296,7 +296,7 @@ public class AbaloneGraphics extends Composite implements View {
 		endRes = abaloneImages.empty_board();
 		animation = new PieceMovingAnimation(startImage, endImage, startRes, 
 				endRes, blankRes, pieceDown);
-		animation.run(1000);
+		animation.run(500);
 	}
 	
 	private void copyBoardWithJumps(List<ArrayList<String>> fromList, 
@@ -314,6 +314,20 @@ public class AbaloneGraphics extends Composite implements View {
 				toList.get(x).set(y, AbaloneConstants.E);
 			}
 		}
+	}
+	
+	public void popMessage(String message) {
+	  List<String> options = Lists.newArrayList(abaloneMessages.ok());
+	  PopupChoices pop = new PopupChoices(message, options,
+        new PopupChoices.OptionChosen() {
+      @Override
+      public void optionChosen(String option) {
+        if (option.equals(abaloneMessages.ok())) {
+        }
+      }
+    });
+	  pop.setWidth("250px");
+	  pop.center();
 	}
 	
 }
