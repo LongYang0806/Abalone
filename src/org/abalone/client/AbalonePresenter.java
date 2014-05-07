@@ -208,10 +208,11 @@ public class AbalonePresenter {
 					}
 				}
 			}
-//			view.popMessage("Valid Points Number: " + validPoints.size());
-//			view.popMessage("HeldX: " + heldX + ", heldY: " + 
-//			    heldY + ", placeX: " + placeX + ", placeY: " + placeY);
-			
+			/*
+			view.popMessage("Valid Points Number: " + validPoints.size());
+			view.popMessage("HeldX: " + heldX + ", heldY: " + 
+			    heldY + ", placeX: " + placeX + ", placeY: " + placeY);
+			*/
 			// 3. make the move
 			placedOnePiece(placeX, placeY);
 			// 4. finish this round.
