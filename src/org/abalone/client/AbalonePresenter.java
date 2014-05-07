@@ -23,6 +23,7 @@ import org.abalone.ai.AlphaBetaPruning;
 import org.abalone.ai.DateTimer;
 import org.abalone.ai.Heuristic;
 import org.abalone.ai.HeuristicImpl;
+import org.abalone.i18n.AbaloneMessages;
 import org.game_api.GameApi.Container;
 import org.game_api.GameApi.EndGame;
 import org.game_api.GameApi.Operation;
@@ -178,23 +179,60 @@ public class AbalonePresenter {
 			return;
 		}
 		if(updateUI.isAiPlayer()){
-			Heuristic heuristic = new HeuristicImpl();
-			AlphaBetaPruning alphaBetaPruning = new AlphaBetaPruning(heuristic, abaloneState);
-			DateTimer timer = new DateTimer(500);
-			int depth = 4;
-			ArrayList<ArrayList<Integer>> move = alphaBetaPruning.findBestMove(abaloneState, depth, timer);
-			jumps = move;
+//			Heuristic heuristic = new HeuristicImpl();
+//			AlphaBetaPruning alphaBetaPruning = new AlphaBetaPruning(heuristic, abaloneState);
+//			DateTimer timer = new DateTimer(500);
+//			int depth = 4;
+//			ArrayList<ArrayList<Integer>> move = alphaBetaPruning.findBestMove(abaloneState, depth, timer);
+//			jumps = move;
+//			
+//			boolean[][] holdableMatrix = getEnableSquares(abaloneState.getBoard(), abaloneState.getTurn());
+//			jumpsCopies = Lists.<ArrayList<Integer>>newArrayList(jumps);
+//			Collections.sort(jumpsCopies, jumpComparator);
+//			List<ArrayList<String>> appliedJumpsBoard = abaloneState.applyJumpOnBoard(jumpsCopies).getBoard();
+//			for(List<Integer> jump : jumps) {
+//				view.animateMove(jump.get(0), jump.get(1), jump.get(2), 
+//						jump.get(3), jump.get(4));
+//			}
+//			view.toHoldOnePiece(appliedJumpsBoard, holdableMatrix, 
+//					!jumps.isEmpty(), abaloneState.getTurn(), UNDERGOING, jumps);
 			
-			boolean[][] holdableMatrix = getEnableSquares(abaloneState.getBoard(), abaloneState.getTurn());
-			jumpsCopies = Lists.<ArrayList<Integer>>newArrayList(jumps);
-			Collections.sort(jumpsCopies, jumpComparator);
-			List<ArrayList<String>> appliedJumpsBoard = abaloneState.applyJumpOnBoard(jumpsCopies).getBoard();
-			for(List<Integer> jump : jumps) {
-				view.animateMove(jump.get(0), jump.get(1), jump.get(2), 
-						jump.get(3), jump.get(4));
+			// 1. get the start point.
+			boolean[][] holdableSquares = getEnableSquares(abaloneState.getBoard(), currentTurn);
+			boolean hasGotAIHeld = false;
+			for(int i = 0; i < AbaloneConstants.BoardRowNum && !hasGotAIHeld; i++) {
+				for(int j = 0; j < AbaloneConstants.BoardColNum && !hasGotAIHeld; j++) {
+					if(holdableSquares[i][j]) {
+						if(Math.random() > 0.5) {
+							heldX = i;
+							heldY = j;
+							hasGotAIHeld = true;
+							break;
+						}
+					}
+				}
 			}
-			view.toHoldOnePiece(appliedJumpsBoard, holdableMatrix, 
-					!jumps.isEmpty(), abaloneState.getTurn(), UNDERGOING, jumps);
+			// 2. get the end point
+			boolean[][] placableSquares = getPlacableMatrix(heldX, heldY);
+			boolean hasPlaced = false;
+			int placeX = 0;
+			int placeY = 0;
+			for(int i = 0; i < AbaloneConstants.BoardRowNum && !hasPlaced; i++) {
+				for(int j = 0; j < AbaloneConstants.BoardColNum && !hasPlaced; j++) {
+					if(placableSquares[i][j]) {
+						if(Math.random() > 0.5) {
+							placeX = i;
+							placeY = j;
+							hasPlaced = true;
+							break;
+						}
+					}
+				}
+			}
+			// 3. make the move
+			placedOnePiece(placeX, placeY);
+			// 4. finish this round.
+			finishAllPlacing(abaloneMessage.equals(GAMEOVER));
 			
 			return;
 		}
@@ -244,8 +282,9 @@ public class AbalonePresenter {
 				view.animateMove(jump.get(0), jump.get(1), jump.get(2), 
 						jump.get(3), jump.get(4));
 			}
+			abaloneMessage = UNDERGOING;
 			view.toHoldOnePiece(currentBoard, holdableMatrix, 
-					!jumps.isEmpty(), abaloneState.getTurn(), UNDERGOING, jumps);
+					!jumps.isEmpty(), abaloneState.getTurn(), abaloneMessage, jumps);
 		} else {
 			List<Integer> reverseCurrentJump = Lists.<Integer>newArrayList(x, y, heldX, heldY, piece);
 			if(jumps.contains(reverseCurrentJump)) {
@@ -287,8 +326,9 @@ public class AbalonePresenter {
 						view.animateMove(jump.get(0), jump.get(1), jump.get(2), 
 								jump.get(3), jump.get(4));
 					}
+					abaloneMessage = UNDERGOING;
 					view.toHoldOnePiece(appliedJumpsBoard, holdableMatrix, 
-							!jumps.isEmpty(), abaloneState.getTurn(), UNDERGOING, jumps);
+							!jumps.isEmpty(), abaloneState.getTurn(), abaloneMessage, jumps);
 				} else {
 					/*
 					 *  because we have make sure the place is legal, we can directly get the pushed pieces,
