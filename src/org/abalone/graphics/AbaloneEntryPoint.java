@@ -10,6 +10,7 @@ import org.game_api.GameApi.VerifyMove;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.shared.GWT;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 
@@ -25,6 +26,7 @@ public class AbaloneEntryPoint implements EntryPoint {
 
 	@Override
 	public void onModuleLoad() {
+		Window.enableScrolling(false);
 		Game game = new Game() {
 			@Override
 			public void sendVerifyMove(VerifyMove verifyMove) {

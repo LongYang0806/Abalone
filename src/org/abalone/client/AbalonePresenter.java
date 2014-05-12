@@ -19,11 +19,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.abalone.ai.AlphaBetaPruning;
-import org.abalone.ai.DateTimer;
-import org.abalone.ai.Heuristic;
-import org.abalone.ai.HeuristicImpl;
-import org.abalone.i18n.AbaloneMessages;
 import org.game_api.GameApi.Container;
 import org.game_api.GameApi.EndGame;
 import org.game_api.GameApi.Operation;
@@ -33,6 +28,7 @@ import org.game_api.GameApi.UpdateUI;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
+import com.google.gwt.user.client.Timer;
 
 public class AbalonePresenter {
 	
@@ -174,6 +170,10 @@ public class AbalonePresenter {
 		}
 		abaloneState = 
 				AbaloneState.gameApiState2AbaloneState(updateUI.getState(), currentTurn, playerIds);
+		
+		view.setPlayerState(abaloneState.getBoard(),
+				getEnableSquares(abaloneState.getBoard(), abaloneState.getTurn()), UNDERGOING);
+		
 		if(updateUI.isViewer()){
 			// TODO: need to be verified after adding the player change frame in the graphics.
 			view.setPlayerState(abaloneState.getBoard(), 
@@ -182,48 +182,55 @@ public class AbalonePresenter {
 		}
 		
 		if(updateUI.isAiPlayer()){
-			// 1. get the start point.
-			boolean[][] holdableSquares = getEnableSquares(abaloneState.getBoard(), currentTurn);
-			List<ArrayList<Integer>> validPoints = getValidHoldablePoints(holdableSquares);
-			int randomValidPointIndex = (int) (Math.random() * validPoints.size());
-			heldX = validPoints.get(randomValidPointIndex).get(0);
-			heldY = validPoints.get(randomValidPointIndex).get(1);
 			
-			// 2. get the end point
-			boolean[][] placableSquares = getPlacableMatrix(heldX, heldY);
-			boolean hasGotPlaced = false;
-			int placeX = 0;
-			int placeY = 0;
-			for(int i = 0; i < AbaloneConstants.BoardRowNum && !hasGotPlaced; i++) {
-				for(int j = 0; j < AbaloneConstants.BoardColNum && !hasGotPlaced; j++) {
-					if(placableSquares[i][j]) {
-						if(i == heldX && j == heldY) {
-						  continue;
-						} else {
-						  placeX = i;
-						  placeY = j;
-						  hasGotPlaced = true;
-						  break;
+			Timer timerAI = new Timer() {
+				@Override
+				public void run() {
+					// 1. get the start point.
+					boolean[][] holdableSquares = getEnableSquares(abaloneState.getBoard(), currentTurn);
+					List<ArrayList<Integer>> validPoints = getValidHoldablePoints(holdableSquares);
+					int randomValidPointIndex = (int) (Math.random() * validPoints.size());
+					heldX = validPoints.get(randomValidPointIndex).get(0);
+					heldY = validPoints.get(randomValidPointIndex).get(1);
+					
+					// 2. get the end point
+					boolean[][] placableSquares = getPlacableMatrix(heldX, heldY);
+					boolean hasGotPlaced = false;
+					int placeX = 0;
+					int placeY = 0;
+					for(int i = 0; i < AbaloneConstants.BoardRowNum && !hasGotPlaced; i++) {
+						for(int j = 0; j < AbaloneConstants.BoardColNum && !hasGotPlaced; j++) {
+							if(placableSquares[i][j]) {
+								if(i == heldX && j == heldY) {
+								  continue;
+								} else {
+								  placeX = i;
+								  placeY = j;
+								  hasGotPlaced = true;
+								  break;
+								}
+							}
 						}
 					}
+					/*
+					view.popMessage("Valid Points Number: " + validPoints.size());
+					view.popMessage("HeldX: " + heldX + ", heldY: " + 
+					    heldY + ", placeX: " + placeX + ", placeY: " + placeY);
+					*/
+					// 3. make the move
+					placedOnePiece(placeX, placeY);
+					// 4. finish this round.
+//					finishAllPlacing(abaloneMessage.equals(GAMEOVER));
 				}
-			}
-			/*
-			view.popMessage("Valid Points Number: " + validPoints.size());
-			view.popMessage("HeldX: " + heldX + ", heldY: " + 
-			    heldY + ", placeX: " + placeX + ", placeY: " + placeY);
-			*/
-			// 3. make the move
-			placedOnePiece(placeX, placeY);
-			// 4. finish this round.
-			finishAllPlacing(abaloneMessage.equals(GAMEOVER));
+			};
+			timerAI.schedule(1000);
 			
 			return;
 		}
 		
 		// So now, it must be a player.
-		view.setPlayerState(abaloneState.getBoard(),
-				getEnableSquares(abaloneState.getBoard(), abaloneState.getTurn()), UNDERGOING);
+//		view.setPlayerState(abaloneState.getBoard(),
+//				getEnableSquares(abaloneState.getBoard(), abaloneState.getTurn()), UNDERGOING);
 //		view.popMessage(AbaloneState.getRedPointsString(abaloneState.getBoard()));
 		// this is my turn, so I need to make the move.
 		if(myTurn.isPresent() && myTurn.get().equals(currentTurn)){
@@ -373,8 +380,14 @@ public class AbalonePresenter {
 							!jumps.isEmpty(), abaloneState.getTurn(), abaloneMessage, jumps);
 				}
 			}
+			Timer finishTimer = new Timer() {
+				@Override
+				public void run() {
+					finishAllPlacing(GAMEOVER.equals(abaloneMessage));
+				}
+			};
+			finishTimer.schedule(500);
 		}
-		finishAllPlacing(GAMEOVER.equals(abaloneMessage));
 	}
 	
 	public void finishAllPlacing(boolean isGameOver) {
@@ -400,7 +413,20 @@ public class AbalonePresenter {
 		if(isGameOver) {
 			moves.add(new EndGame(playerIds.get(yourPlayerIndex)));
 		}
-		container.sendMakeMove(moves);
+		final List<Operation> finalMoves = Lists.<Operation>newArrayList(moves);
+		Timer sendMoveTimer = new Timer() {
+			@Override
+			public void run() {
+				container.sendMakeMove(finalMoves);
+			}
+		};
+		
+		if (isGameOver) {
+			sendMoveTimer.schedule(1500);
+		} else {
+			sendMoveTimer.schedule(0);
+		}
+		
 		jumps = Lists.<ArrayList<Integer>>newArrayList();
 		lastJump = new int[5];
 		/*

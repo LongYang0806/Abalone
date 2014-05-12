@@ -137,7 +137,16 @@ public class AbaloneState {
 		List<ArrayList<String>> board = (List<ArrayList<String>>)gameApiState.get(BOARD);
 		@SuppressWarnings("unchecked")
 		List<ArrayList<Integer>> jump = (List<ArrayList<Integer>>)gameApiState.get(JUMP);
-		return new AbaloneState(turn, playerIds, board, jump, null);
+		// check whether reach the end of game.
+		for (List<Integer> points : AbaloneConstants.scoreSquares) {
+			int x = points.get(0);		
+			int y = points.get(1);
+			if (board.get(x).get(y).equals(AbaloneConstants.B) ||
+					board.get(x).get(y).equals(AbaloneConstants.W)) {
+				return new AbaloneState(turn, playerIds, board, jump, Optional.of(true));
+			}
+		}
+		return new AbaloneState(turn, playerIds, board, jump, Optional.of(false));
 	}
 	
 	public static AbaloneState getEmptyAbaloneState() {

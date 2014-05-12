@@ -27,9 +27,7 @@ import com.google.gwt.media.client.Audio;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -108,30 +106,46 @@ public class AbaloneGraphics extends Composite implements View {
 	@Override
 	public void setPlayerState(List<ArrayList<String>> board, boolean[][] enableMatrix, 
 			String message){
+		outerBoard.clear();
+		innerBoard.clear();
 		placeBoardWithSquare(board, new boolean[BoardRowNum][BoardColNum]);
 		placeBoardWithPieces(board, enableMatrix);
 //		finishRoundBtn.setEnabled(false);
 		if(message.equals(GAMEOVER)){
-			//TODO should throw out box to say whose is the winner.
+			abalonePresenter.finishAllPlacing(isGameOver);
+			List<String> options = Lists.newArrayList(abaloneMessages.ok());
+			new PopupChoices(message, options,
+					new PopupChoices.OptionChosen() {
+				@Override
+				public void optionChosen(String option) {
+					if (option.equals(abaloneMessages.ok())) {
+					}
+				}
+			}).center();
 		}
 	}
 	
 	@Override
 	public void toHoldOnePiece(List<ArrayList<String>> board, boolean[][] holdableMatrix, 
 			boolean enableFinishButton, String turn, String message, List<ArrayList<Integer>> jumps) {
+		outerBoard.clear();
+		innerBoard.clear();
 		final List<ArrayList<String>> finalBoard = board;
+		if (message.equals(GAMEOVER)) {
+			holdableMatrix = new boolean[AbaloneConstants.BoardRowNum][AbaloneConstants.BoardColNum];
+		}
 		final boolean[][] finalHoldableMatrix = holdableMatrix;
 		List<ArrayList<String>> boardWithoutJumps = Lists.<ArrayList<String>>newArrayList();
 		copyBoardWithJumps(board, boardWithoutJumps, jumps);
 		Timer animationTimer = new Timer() {
-			@Override
 			public void run() {
 				placeBoardWithPieces(finalBoard, finalHoldableMatrix);
 			}
 		};
 		placeBoardWithSquare(board, new boolean[BoardRowNum][BoardColNum]);
-		animationTimer.schedule(500);
 		placeBoardWithPieces(boardWithoutJumps, holdableMatrix);
+		animationTimer.schedule(500);
+		
 //		finishRoundBtn.setEnabled(enableFinishButton);
 		String winnerMessage = abaloneMessages.gameOver(
 				turn.equalsIgnoreCase(AbaloneConstants.WTurn) ? abaloneMessages.whitePlayer() :
@@ -154,6 +168,8 @@ public class AbaloneGraphics extends Composite implements View {
 	@Override
 	public void toPlaceOnePiece(List<ArrayList<String>> board, boolean[][] placableMatrix, 
 			boolean enableFinishButton, String turn, String message) {
+		outerBoard.clear();
+		innerBoard.clear();
 		placeBoardWithSquare(board, placableMatrix);
 		placeBoardWithPieces(board, placableMatrix);
 //		finishRoundBtn.setEnabled(enableFinishButton);

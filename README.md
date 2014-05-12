@@ -1,5 +1,6 @@
-AbaloneGameRevised
-==================
+# Abalone
+
+## Wi
 
 This is the SMG course game design revised version.
 
