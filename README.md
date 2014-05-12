@@ -3,7 +3,8 @@
 ## Overview
 - This is a game designed for [NYU-SMG 2014 Spring](https://code.google.com/p/nyu-gaming-course/wiki/Syllabus) class.
 - Wiki page for [Abalone Board Game](http://en.wikipedia.org/wiki/Abalone_(board_game))
-- Here comes the ![ScreenShot](/board.png)
+- Here comes the UI 
+  ![ScreenShot](/board.png)
 
 ## Demo Zone
 - Play in [Container](http://smg-server.appspot.com)
