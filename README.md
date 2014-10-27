@@ -1,6 +1,6 @@
 # Abalone
 
-##### Author: Long Yang
+##### Author: Long Yang @ Yahoo!
 ## Overview
 - This is a game designed for [NYU-SMG 2014 Spring](https://code.google.com/p/nyu-gaming-course/wiki/Syllabus) class.
 - Wiki page for [Abalone Board Game](http://en.wikipedia.org/wiki/Abalone_(board_game))
